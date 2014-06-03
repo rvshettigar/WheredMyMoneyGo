@@ -1,0 +1,195 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+       <TextView
+           android:id="@+id/expenseNameLabelEdit"
+           android:layout_width="146dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="3.34"
+           android:text="Expense Name :"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/inputExpenseNameEdit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName" >
+            
+             <requestFocus />
+
+        </EditText>
+
+    </LinearLayout>
+    
+    
+     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+       <TextView
+        android:id="@+id/expenseCurrencyLabelEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="3.34"
+        android:text="Currency :"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+           android:id="@+id/inputExpenseCurrencyEdit"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_weight="3.34" />
+        
+    </LinearLayout>
+    
+    
+     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+       <TextView
+        android:id="@+id/expenseAmountLabelEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="3.34"
+        android:text="Amount :"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+        <EditText
+            android:id="@+id/inputExpenseAmountEdit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+             >
+
+        </EditText>
+        
+    </LinearLayout>
+    
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+       <TextView
+        android:id="@+id/expenseDateLabelEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="3.34"
+        android:text="Date :"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+       <TextView
+        android:id="@+id/expenseDateEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+    </LinearLayout>
+     
+     <Button
+        android:id="@+id/expPickDateEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Date"
+        android:onClick="showDatePickerDialog" /> 
+
+     
+       <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+       <TextView
+        android:id="@+id/expenseCategoryLabelEdit"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:text="Category :"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+          <Spinner
+           android:id="@+id/expCategory1Edit"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_weight="3.34" />
+
+    </LinearLayout>
+   
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+       <TextView
+        android:id="@+id/expenseDescLabelEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description (Optional) :"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+        <EditText
+            android:id="@+id/inputExpenseDescEdit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName" >
+
+           
+        </EditText>
+        
+    </LinearLayout>
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+       <Button
+        android:id="@+id/expSaveEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save" />
+        
+        <Button
+        android:id="@+id/expCancelEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        />
+        
+    </LinearLayout>
+ 
+
+</LinearLayout>

@@ -1,0 +1,95 @@
+package com.anumeha.wheredmymoneygo.DBhelpers;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.anumeha.wheredmymoneygo.DBHandler;
+import com.anumeha.wheredmymoneygo.Source.Source;
+
+public class SourceDbHelper {
+	
+	 /** Sources Table **/
+    private static final String TABLE_SOURCE	 = "Source";
+ 
+    private static final String KEY_S_ID = "_id";
+    private static final String KEY_S_NAME = "s_name";
+    
+    
+    private DBHandler dbh;
+	
+	 public SourceDbHelper(Context context){
+			
+		dbh = new DBHandler(context);			
+	 }
+	 
+	 // add a Source
+	 public void addSource(Source source) {
+		 
+		 SQLiteDatabase   db = dbh.getWritableDatabase();
+		 
+		 ContentValues values = new ContentValues();
+		 values.put(KEY_S_NAME, source.getName()); // Source Name
+				 
+		 // Inserting Row
+		 db.insert(TABLE_SOURCE, null, values);
+		 db.close(); // Closing database connection
+		 
+	 }
+	 
+	 public Cursor getAllSources() {
+		 
+		 SQLiteDatabase db = dbh.getReadableDatabase();
+		 
+		 Cursor cursor = db.query(TABLE_SOURCE, null, null, null, null , null, null);
+		
+		 return cursor;
+		 
+	 }
+	 
+	 public void updateSource(Source source, String name) {
+	    	SQLiteDatabase db = dbh.getWritableDatabase();
+	    	 
+	    	 ContentValues values = new ContentValues();
+			 values.put(KEY_S_NAME, source.getName()); // Source Name
+	  	   
+	  	    // Updating Row
+	  	    db.update(TABLE_SOURCE, values, KEY_S_NAME+"=\""+ name+ "\"", null);
+	  	    db.close(); // Closing database connection
+	 
+	   }
+	 
+	 public void deleteSource(String name)
+	 {
+	      SQLiteDatabase db = dbh.getWritableDatabase();
+	 
+	  	    // Deleting Row
+	  	    db.delete(TABLE_SOURCE, KEY_S_NAME + "=\"" + name +"\"", null);
+	  	    db.close(); // Closing database connection
+	  
+    }
+	 
+	 public Boolean nameExists(String name) {
+	        // Select All Query
+	        String selectQuery = "SELECT "+KEY_S_NAME+" FROM " + TABLE_SOURCE + " WHERE s_name= \"" + name+"\"";
+	     
+	        SQLiteDatabase db = dbh.getReadableDatabase();
+	        Cursor cursor = db.rawQuery(selectQuery, null);
+	        
+	        if(cursor.getCount() == 0)
+	        {
+	        	return false;
+	        }
+	      
+	        return true;
+	    }
+
+	public Cursor getCategoryByName(String souName) {
+		
+		SQLiteDatabase db = dbh.getReadableDatabase();
+		String []arr = {souName};
+		Cursor c = db.query(TABLE_SOURCE, null, KEY_S_NAME+ " = ?", arr, null , null, null);	
+		return c;
+	}
+}

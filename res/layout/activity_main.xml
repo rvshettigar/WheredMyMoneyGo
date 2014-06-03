@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+    android:id="@+id/SortByLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:visibility="gone">
+     <TextView
+           android:id="@+id/sortLabelt"
+           android:layout_width="146dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="3.34"
+           android:text="Sort by Date :"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+     
+      <Button
+        android:id="@+id/sortByDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+      
+      </LinearLayout>
+    
+     <LinearLayout
+	    android:id="@+id/SortByLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" 
+	    android:visibility="gone">
+     <TextView
+           android:id="@+id/sortLabel"
+           android:layout_width="146dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="3.34"
+           android:text="Sort by Date :"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+     
+      <Button
+        android:id="@+id/sortByDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+      
+      </LinearLayout>
+      
+    
+     <Button
+        android:id="@+id/convertCur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="convert to default"/>
+     
+     <Button
+        android:id="@+id/listPie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pie"
+        android:visibility="gone"/>
+     
+    <FrameLayout
+        android:id="@+id/fragment_e_options1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+    <FrameLayout
+        android:id="@+id/fragment_expense_list1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+    
+</LinearLayout>
