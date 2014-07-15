@@ -17,7 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.anumeha.wheredmymoneygo.DBhelpers.CurrencyDbHelper;
+import com.anumeha.wheredmymoneygo.DBhelpers.ExpenseDbHelper;
+import com.anumeha.wheredmymoneygo.Expense.Expense;
+import com.anumeha.wheredmymoneygo.Income.Income;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -34,19 +38,26 @@ public class CurrencyConverter {
 	
 	private CurrencyDbHelper db;
 	private SharedPreferences prefs;
-	private String baseCurrency;
 	private Context context;
 	public CurrencyConverter(CurrencyDbHelper db, SharedPreferences prefs, Context context) {
 		this.db = db;
 		this.prefs = prefs;	
-		this.baseCurrency = prefs.getString("base_currency", "USD");
 		this.context = context;
 	}
 	
-	public void getConvertedRate(ResultListener<Float> lstnr, String from, String to) {
+	public void getConvertedRate(ResultListener<Float> lstnr, String from, Expense e) {
 		
-		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,db,context);
-		task.execute(from,to,baseCurrency); //to is the default currency
+		String to = prefs.getString("def_currency","USD" );
+		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,db,context, e);
+		task.execute(from,to); //to is the default currency
+		
+	}
+	
+	public void getConvertedRate(ResultListener<Float> lstnr, String from, Income i) {
+		
+		String to = prefs.getString("def_currency","USD" );
+		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,db,context, i);
+		task.execute(from,to); //to is the default currency
 		
 	}
 	
@@ -54,28 +65,47 @@ public class CurrencyConverter {
 		
 		ResultListener<Float> lstnr; 
 		CurrencyDbHelper db;
+		ExpenseDbHelper expDb ;
 		static Context context;
+		Expense e;
+		Income i;
+		Boolean isExpense = true;
+		ProgressDialog pd;
 		
-		ConvertCurrencyTask(ResultListener<Float> lstnr, CurrencyDbHelper db, Context context) {
+		ConvertCurrencyTask(ResultListener<Float> lstnr, CurrencyDbHelper db, Context context, Expense e) {
 			this.lstnr = lstnr;
 			this.db = db;
 			this.context = context;
+			this.e = e;
+			expDb = new ExpenseDbHelper(context);
+		}
+		
+		ConvertCurrencyTask(ResultListener<Float> lstnr, CurrencyDbHelper db, Context context, Income i) {
+			this.lstnr = lstnr;
+			this.db = db;
+			this.context = context;
+			this.i = i;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			pd = new ProgressDialog(context);
+			pd.show();
 		}
 		
 		@Override
 		protected Float doInBackground(String... params) {
-			float rateDefToBase;
-			float rateCurToBase;
-			float rate = -1;
 			
-			rateDefToBase = getRate(params[1], params[2], db);
-			if(rateDefToBase == -1)
-				return rate;
-			rateCurToBase = getRate(params[0], params[2], db);
-			if(rateCurToBase == -1)
-				return rate;
-						
-			return (rateCurToBase/rateDefToBase);
+			Float rate = getRate(params[0],params[1],db);	
+			
+			if(rate.isNaN() || rate == -1) {
+				e.set_convToDef(0);	
+			} else {
+				e.set_convToDef(rate);
+			}
+			
+			expDb.addExpense(e);
+			return rate;
 			
 		}
 		
@@ -83,8 +113,10 @@ public class CurrencyConverter {
 		protected void onPostExecute(Float rate) {
 			
 			if(rate.isNaN() || rate == -1) {
+				pd.dismiss();
 				lstnr.OnFaiure(0);
 			} else {
+				pd.dismiss();
 				lstnr.OnSuccess(rate); 
 			}
 			
@@ -92,6 +124,9 @@ public class CurrencyConverter {
 		
 		private float getRate(String curCode, String base,CurrencyDbHelper db) {
 		
+			if(curCode.equals(base)) {
+				return 1;
+			}
 			Cursor c= db.getCurrencyById(curCode);
 			c.moveToFirst();
 			String timeStamp = c.getString(4);
@@ -103,22 +138,27 @@ public class CurrencyConverter {
 				return rate;
 			}
 			
-			if(timeStamp.equals("") && !networkPresent()) {
-				
+			if(timeStamp.equals("") && !networkPresent()) {		
 				return rate;
 			}
 			else if(networkPresent()) {
 				
-				StringBuffer sb = new StringBuffer("http://rate-exchange.appspot.com/currency?from=");
+				StringBuffer sb = new StringBuffer("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22");
 				sb.append(curCode);
-				sb.append("&to=");
 				sb.append(base);
+				sb.append("%22)&format=json&env=store://datatables.org/alltableswithkeys");
 				
 				JSONObject json = getJSONFromURL(sb.toString());
 				
-				if(json.has("rate")) {
+				
+				if(json!=null) {
 					try {
-						rate =Float.parseFloat(json.getString("rate"));
+						JSONObject jsonObj =  ((json.getJSONObject("query")).getJSONObject("results")).getJSONObject("rate");
+						if(jsonObj != null && jsonObj.has("Rate")) {
+							
+							rate =Float.parseFloat(jsonObj.getString("Rate")); 
+							System.out.println("rate is"+rate);
+						}
 					} catch (NumberFormatException e) {
 						e.printStackTrace();
 					} catch (JSONException e) {

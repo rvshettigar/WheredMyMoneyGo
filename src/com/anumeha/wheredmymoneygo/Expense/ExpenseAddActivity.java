@@ -12,6 +12,7 @@ import java.util.Locale;
 import com.anumeha.wheredmymoneygo.Category.CategoryCursorLoader;
 import com.anumeha.wheredmymoneygo.Currency.CurrencyCursorLoader;
 import com.anumeha.wheredmymoneygo.DBhelpers.ExpenseDbHelper;
+import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
 import com.example.wheredmymoneygo.*;
 
 import android.app.Activity;
@@ -43,6 +44,7 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 	ExpenseDbHelper dbh;
 	CategoryCursorLoader loader;
 	boolean valid = true;
+	CurrencyConverter conv;
 	
 	final static int DATE_DIALOG_ID = 999;
 	 @Override
@@ -124,9 +126,16 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 					e_desc =" ";
 				}
 				
-				if(valid) {								
-					dbh.addExpense(new Expense(e_name,e_desc,e_date,e_currency,amount,e_category1));
-            		endActivity("added");
+				if(valid) {	
+					conv.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+	 					@Override
+	 					public void OnSuccess(Float rate) {
+	 						endActivity("added");
+	 					}	
+	 					@Override
+	 					public void OnFaiure(int errCode) {
+	 						endActivity("added");
+	 					}  },e_currency,new Expense(e_name,e_desc,e_date,e_currency,amount,e_category1));          		
 				}
 				
 				else

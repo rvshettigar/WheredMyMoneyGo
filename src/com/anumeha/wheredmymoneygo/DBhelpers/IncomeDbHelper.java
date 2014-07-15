@@ -10,8 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 
 import com.anumeha.wheredmymoneygo.DBHandler;
-import com.anumeha.wheredmymoneygo.Expense.Expense;
 import com.anumeha.wheredmymoneygo.Income.Income;
+import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
 
 public class IncomeDbHelper {
 
@@ -25,34 +25,65 @@ public class IncomeDbHelper {
     private static final String KEY_I_DATE = "i_date";
     private static final String KEY_I_AMOUNT = "i_amount";
     private static final String KEY_I_SOURCE = "i_source";
+    private static final String KEY_I_CONVRATE = "i_convrate";
     
     private SQLiteDatabase database;
 	private DBHandler dbh;
 	private SharedPreferences prefs;
+	private CurrencyConverter conv; 
+	private CurrencyDbHelper curDb;
+	private float convRate;
 	
 	public IncomeDbHelper(Context context){
 		
 		dbh = new DBHandler(context);
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		curDb = new CurrencyDbHelper(context);
+		conv = new CurrencyConverter(curDb,prefs,context);
 		
 	}
 	
 	// Adding new income
     public void addIncome(Income income) {
 	    database = dbh.getWritableDatabase();
+	    String currency = income.getCurrency();
+	    float convRate = 1;
 
 	    ContentValues values = new ContentValues();
-	    values.put(KEY_I_NAME, income.getName()); // Expense Name
+	    values.put(KEY_I_NAME, income.getName()); // IncomeName
 	    values.put(KEY_I_DESC, income.getDesc()); // income description
 	    values.put(KEY_I_DATE, income.getDate()); // income date
 	    values.put(KEY_I_CURRENCY, income.getCurrency()); // income currency
 	    values.put(KEY_I_AMOUNT, income.getAmount()); // income amount  
 	    values.put(KEY_I_SOURCE, income.getSource()); // income Source
-	 
+	    values.put(KEY_I_CONVRATE, convRate); // Income conversion to default rate
 	    // Inserting Row
 	    database.insert(TABLE_INCOME, null, values);
 	    database.close(); // Closing database connection
     }
+    
+  /*  private float getConvRate(String currency) {
+   	 String defaultCurrency = prefs.getString("def_currency", "USD");
+	    //get the current conversion to default currency rate
+	    if(currency.equals(defaultCurrency)) { //conversion not required 				
+	    		return 1;				
+			} else { //conversion to default				
+				conv.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+					@Override
+					public void OnSuccess(Float rate) {
+						setConvRate(rate);
+					}	
+					@Override
+					public void OnFaiure(int errCode) {
+						setConvRate(-1f);
+					}  },currency);
+			}
+	    return convRate;
+	}*/
+    
+    protected void setConvRate(Float rate) {
+		convRate = rate;	
+	}
     
     //getting all income
     public Cursor getAllIncome() {

@@ -24,6 +24,7 @@ public class DBHandler extends SQLiteOpenHelper{
     private static final String KEY_E_DATE = "e_date";
     private static final String KEY_E_AMOUNT = "e_amount";
     private static final String KEY_E_CATEGORY1 = "e_category1";
+    private static final String KEY_E_CONVRATE = "e_convrate";
     
     /** Income Table **/
     private static final String TABLE_INCOME	 = "Income";
@@ -35,6 +36,7 @@ public class DBHandler extends SQLiteOpenHelper{
     private static final String KEY_I_DATE = "i_date";
     private static final String KEY_I_AMOUNT = "i_amount";
     private static final String KEY_I_SOURCE = "i_source";
+    private static final String KEY_I_CONVRATE = "i_convrate";
     
     /** Category Table **/
     private static final String TABLE_CATEGORY	 = "Category";
@@ -94,7 +96,8 @@ public class DBHandler extends SQLiteOpenHelper{
 	        		+ KEY_E_DATE + " datetime, " 
 	        		+ KEY_E_CURRENCY + " TEXT, " 
 	                + KEY_E_AMOUNT + " REAL, "
-	                + KEY_E_CATEGORY1 + " TEXT"+")";
+	                + KEY_E_CATEGORY1 + " TEXT, "
+	                + KEY_E_CONVRATE + " REAL"+")";
 	        db.execSQL(CREATE_EXPENSES_TABLE);
 	        
 	      //Income Table
@@ -105,7 +108,8 @@ public class DBHandler extends SQLiteOpenHelper{
 	        		+ KEY_I_DATE + " datetime, " 
 	        		+ KEY_I_CURRENCY + " TEXT, " 
 	                + KEY_I_AMOUNT + " REAL, "
-	                + KEY_I_SOURCE + " TEXT"+")";
+	                + KEY_I_SOURCE + " TEXT, "
+	                + KEY_I_CONVRATE + " REAL"+")";
 	        db.execSQL(CREATE_INCOME_TABLE);
 	        	        
 	        //Category Table     

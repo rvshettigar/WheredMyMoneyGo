@@ -10,6 +10,7 @@ import com.example.wheredmymoneygo.R;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ResourceCursorAdapter;
@@ -18,10 +19,12 @@ import android.widget.TextView;
 public class IncomeCursorAdapter extends ResourceCursorAdapter {
 	
 SharedPreferences prefs;
+String defaultCurrency;
 	
 	public IncomeCursorAdapter(Context context, int layout, Cursor c, int flags) {
 		super(context, layout, c, flags);
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		defaultCurrency = prefs.getString("def_currency", "USD");
 	
 	}
 	
@@ -55,9 +58,24 @@ SharedPreferences prefs;
 		e_date.setText(sdf.format(tempDate)); 
 		
 		//show amount after appending currency symbol
-		TextView e_Amount = (TextView)view.findViewById(R.id.incomeAmount);
+		TextView i_Amount = (TextView)view.findViewById(R.id.incomeAmount);
 		currency = cursor.getString(4);
-		e_Amount.setText(currency + " "+cursor.getString(5));
+		
+		final float convRate = Float.parseFloat(cursor.getString(7));		   
+			if(prefs.getString("inc_conv", "off").equals("off") || currency.equals(defaultCurrency)) { //conversion not required
+				
+				i_Amount.setText(currency + " "+cursor.getString(5));
+			} else { //conversion to default
+				
+				final float amount = Float.parseFloat(cursor.getString(5));
+				 if(convRate == -1) {
+					 i_Amount.setText(currency + " " + amount);
+					 i_Amount.setTextColor(Color.RED);			    	
+				  } else {
+					  i_Amount.setText(defaultCurrency + " " + amount*convRate);
+				  }
+			}
+		
 		
 		//set the source
 		TextView e_Category = (TextView)view.findViewById(R.id.incomeSource);

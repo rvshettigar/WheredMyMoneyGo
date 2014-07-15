@@ -69,32 +69,22 @@ public class ExpenseCursorAdapter extends ResourceCursorAdapter{
 		//show amount after appending currency symbol
 		currency = cursor.getString(4);
 	    final TextView e_Amount = (TextView)view.findViewById(R.id.expenseAmount);
+	    final float convRate = Float.parseFloat(cursor.getString(7));
+	    
+	   
 		if(prefs.getString("exp_conv", "off").equals("off") || currency.equals(defaultCurrency)) { //conversion not required
 			
 			e_Amount.setText(currency + " "+cursor.getString(5));
 		} else { //conversion to default
 			
 			final float amount = Float.parseFloat(cursor.getString(5));
-			
-			conv.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {
-
-				@Override
-				public void OnSuccess(Float rate) {
-					
-					e_Amount.setText(defaultCurrency + " " + amount*rate);
-					System.out.println("Success called" );
-				}
-
-				@Override
-				public void OnFaiure(int errCode) {
-					
-					e_Amount.setText(currency + " " + amount);
-					e_Amount.setTextColor(Color.RED);
-					
-				}  },currency,defaultCurrency);
-			
+			 if(convRate == -1) {
+				 e_Amount.setText(currency + " " + amount);
+				 e_Amount.setTextColor(Color.RED);			    	
+			  } else {
+				  e_Amount.setText(defaultCurrency + " " + amount*convRate);
+			  }
 		}
-		
 		//set the category
 		TextView e_Category = (TextView)view.findViewById(R.id.expenseCategory);
 		e_Category.setText(cursor.getString(6));

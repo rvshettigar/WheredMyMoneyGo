@@ -15,12 +15,13 @@ import java.util.Locale;
 public class CashFlow {
 	
 	 //private variables
-    int _id;
-    String _name;
-    String _desc;
-    String _date;
-    String _currency;
-    float _amount;
+    private int _id;
+    private String _name;
+    private String _desc;
+    private String _date;
+    private String _currency;
+    private float _amount;
+    private float _convToDef;
     
     //empty constructor
     public CashFlow(){}
@@ -48,6 +49,17 @@ public class CashFlow {
         this._currency = currency;
         this._amount = amount;
          
+    }
+    
+    //constructor with currency conv 
+    public CashFlow(String name, String desc, String date, String currency, float amount, float convToDef){
+        
+        this._name = name;
+        this._desc = desc;
+        this._date = date;
+        this._currency = currency;
+        this._amount = amount;
+        this._convToDef = convToDef;   
     }
     
  // getting ID
@@ -129,5 +141,15 @@ public class CashFlow {
     public void setCurrency(String currency){
         this._currency = currency;
     }
+
+
+	public float get_convToDef() {
+		return _convToDef;
+	}
+
+
+	public void set_convToDef(float _convToDef) {
+		this._convToDef = _convToDef;
+	}
 
 }

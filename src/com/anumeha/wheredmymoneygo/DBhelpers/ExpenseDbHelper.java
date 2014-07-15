@@ -3,6 +3,7 @@ package com.anumeha.wheredmymoneygo.DBhelpers;
 import java.util.ArrayList;
 
 import com.anumeha.wheredmymoneygo.Expense.Expense;
+import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
 import com.anumeha.wheredmymoneygo.DBHandler;
 
 import android.content.ContentValues;
@@ -24,25 +25,31 @@ public class ExpenseDbHelper {
     private static final String KEY_E_DATE = "e_date";
     private static final String KEY_E_AMOUNT = "e_amount";
     private static final String KEY_E_CATEGORY1 = "e_category1";
+    private static final String KEY_E_CONVRATE = "e_convrate";
 
 
 	private SQLiteDatabase database;
 	private DBHandler dbh;
 	private SharedPreferences prefs;
+	private CurrencyConverter conv; 
+	private CurrencyDbHelper curDb;
+	private float convRate;
 	
 	
 	public ExpenseDbHelper(Context context){
 		
 		dbh = new DBHandler(context);
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		curDb = new CurrencyDbHelper(context);
+		conv = new CurrencyConverter(curDb,prefs,context);
 		
 	}
 	
 	// Adding new expense
     public void addExpense(Expense expense) {
 	    database = dbh.getWritableDatabase();
-	 
-	   
+	    String currency = expense.getCurrency();
+	    System.out.println("Conv Rate gotten as: "+convRate);
 	    ContentValues values = new ContentValues();
 	    values.put(KEY_E_NAME, expense.getName()); // Expense Name
 	    values.put(KEY_E_DESC, expense.getDesc()); // Expense description
@@ -50,13 +57,15 @@ public class ExpenseDbHelper {
 	    values.put(KEY_E_CURRENCY, expense.getCurrency()); // Expense currency
 	    values.put(KEY_E_AMOUNT, expense.getAmount()); // Expense amount  
 	    values.put(KEY_E_CATEGORY1, expense.getCategory1()); // Expense Category1
-	 
+	    values.put(KEY_E_CONVRATE, expense.get_convToDef()); // Expense conversion to default rate
+	    System.out.println("The rate to currency "+currency+"is "+convRate);
 	    // Inserting Row
 	    database.insert(TABLE_EXPENSES, null, values);
 	    database.close(); // Closing database connection
     }
     
-    //getting all expenses
+
+	//getting all expenses
     public Cursor getAllExpenses() {
     	
     	StringBuffer temp = new StringBuffer();
