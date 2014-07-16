@@ -32,7 +32,7 @@ public class ExpenseCursorAdapter extends ResourceCursorAdapter{
 		defaultCurrency = prefs.getString("def_currency", "USD");
 		baseCurrency = prefs.getString("base_currency", "USD");
 		db = new CurrencyDbHelper(context);
-		conv = new CurrencyConverter(db,prefs,context);
+		conv = new CurrencyConverter(context);
 	}
 
 	@Override

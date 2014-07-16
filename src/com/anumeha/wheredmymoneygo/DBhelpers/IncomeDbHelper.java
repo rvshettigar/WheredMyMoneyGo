@@ -39,7 +39,7 @@ public class IncomeDbHelper {
 		dbh = new DBHandler(context);
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		curDb = new CurrencyDbHelper(context);
-		conv = new CurrencyConverter(curDb,prefs,context);
+		conv = new CurrencyConverter(context);
 		
 	}
 	

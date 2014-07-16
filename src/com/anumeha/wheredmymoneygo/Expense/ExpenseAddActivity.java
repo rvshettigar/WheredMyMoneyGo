@@ -63,9 +63,11 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 			cancel = (Button)findViewById(R.id.expAddCancel);
 			cancel.setOnClickListener(this);
 			dbh = new ExpenseDbHelper(this);
+			conv = new CurrencyConverter(this);
 			
 			getLoaderManager().initLoader(1,null, this ); // 1 for category
 			getLoaderManager().initLoader(5,null, this ); //5 for currency
+		
 	 
 	    }
 	 

@@ -28,6 +28,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 public class CurrencyConverter {
 	
@@ -39,9 +40,9 @@ public class CurrencyConverter {
 	private CurrencyDbHelper db;
 	private SharedPreferences prefs;
 	private Context context;
-	public CurrencyConverter(CurrencyDbHelper db, SharedPreferences prefs, Context context) {
-		this.db = db;
-		this.prefs = prefs;	
+	public CurrencyConverter(Context context) {
+		this.db = new CurrencyDbHelper(context);
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(context);	
 		this.context = context;
 	}
 	
@@ -90,6 +91,7 @@ public class CurrencyConverter {
 		@Override
 		protected void onPreExecute() {
 			pd = new ProgressDialog(context);
+			pd.setMessage("Adding...");
 			pd.show();
 		}
 		
