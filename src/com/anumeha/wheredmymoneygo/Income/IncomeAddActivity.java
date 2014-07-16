@@ -11,6 +11,7 @@ import com.anumeha.wheredmymoneygo.Category.CategoryCursorLoader;
 import com.anumeha.wheredmymoneygo.Currency.CurrencyCursorLoader;
 import com.anumeha.wheredmymoneygo.DBhelpers.IncomeDbHelper;
 import com.anumeha.wheredmymoneygo.Income.Income;
+import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
 import com.anumeha.wheredmymoneygo.Source.SourceCursorLoader;
 import com.example.wheredmymoneygo.R;
 
@@ -43,6 +44,7 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 	IncomeDbHelper dbh;
 	CategoryCursorLoader loader;
 	boolean valid = true;
+	CurrencyConverter conv;
 	
 	final static int DATE_DIALOG_ID = 999;
 	 @Override
@@ -61,6 +63,7 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 			cancel = (Button)findViewById(R.id.incAddCancel);
 			cancel.setOnClickListener(this);
 			dbh = new IncomeDbHelper(this);
+			conv = new CurrencyConverter(this);
 			
 			getLoaderManager().initLoader(1,null, this );
 			getLoaderManager().initLoader(4,null, this );
@@ -123,8 +126,16 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 					i_desc =" ";
 				}
 				
-				if(valid) {								
-					dbh.addIncome(new Income(i_name,i_desc,i_date,i_currency,amount,i_source));
+				if(valid) {	
+					conv.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+	 					@Override
+	 					public void OnSuccess(Float rate) {
+	 						endActivity("added");
+	 					}	
+	 					@Override
+	 					public void OnFaiure(int errCode) {
+	 						endActivity("added");
+	 					}  },i_currency,new Income(i_name,i_desc,i_date,i_currency,amount,i_source));     
             		endActivity("added");
 				}
 				

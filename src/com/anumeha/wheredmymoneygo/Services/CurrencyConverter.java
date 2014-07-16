@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import com.anumeha.wheredmymoneygo.DBhelpers.CurrencyDbHelper;
 import com.anumeha.wheredmymoneygo.DBhelpers.ExpenseDbHelper;
+import com.anumeha.wheredmymoneygo.DBhelpers.IncomeDbHelper;
 import com.anumeha.wheredmymoneygo.Expense.Expense;
 import com.anumeha.wheredmymoneygo.Income.Income;
 
@@ -67,7 +68,8 @@ public class CurrencyConverter {
 		ResultListener<Float> lstnr; 
 		CurrencyDbHelper db;
 		ExpenseDbHelper expDb ;
-		static Context context;
+		IncomeDbHelper incDb;
+	    Context context;
 		Expense e;
 		Income i;
 		Boolean isExpense = true;
@@ -86,6 +88,8 @@ public class CurrencyConverter {
 			this.db = db;
 			this.context = context;
 			this.i = i;
+			incDb = new IncomeDbHelper(context);
+			isExpense = false;
 		}
 		
 		@Override
@@ -100,13 +104,23 @@ public class CurrencyConverter {
 			
 			Float rate = getRate(params[0],params[1],db);	
 			
-			if(rate.isNaN() || rate == -1) {
-				e.set_convToDef(0);	
+			if(isExpense) {
+				if(rate.isNaN() || rate == -1) {
+					e.set_convToDef(0);	
+				} else {
+					e.set_convToDef(rate);
+				}
+				
+				expDb.addExpense(e); 
 			} else {
-				e.set_convToDef(rate);
+				if(rate.isNaN() || rate == -1) {
+					i.set_convToDef(0);	
+				} else {
+					i.set_convToDef(rate);
+				}
+				
+				incDb.addIncome(i); 
 			}
-			
-			expDb.addExpense(e);
 			return rate;
 			
 		}
