@@ -37,65 +37,73 @@ public class CurrencyConverter {
 		void OnSuccess(T data);
 		void OnFaiure(int errCode);
 	}
-	
-	private CurrencyDbHelper db;
+
 	private SharedPreferences prefs;
 	private Context context;
 	public CurrencyConverter(Context context) {
-		this.db = new CurrencyDbHelper(context);
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(context);	
 		this.context = context;
 	}
 	
-	public void getConvertedRate(ResultListener<Float> lstnr, String from, Expense e) {
+	public void getConvertedRate(ResultListener<Float> lstnr, Expense e, boolean update) {
 		
 		String to = prefs.getString("def_currency","USD" );
-		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,db,context, e);
-		task.execute(from,to); //to is the default currency
+		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,context, e, update);
+		task.execute(e.getCurrency(),to); //to is the default currency
 		
 	}
 	
-	public void getConvertedRate(ResultListener<Float> lstnr, String from, Income i) {
+	public void getConvertedRate(ResultListener<Float> lstnr, Income i, boolean update) {
 		
 		String to = prefs.getString("def_currency","USD" );
-		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,db,context, i);
-		task.execute(from,to); //to is the default currency
+		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,context, i,update);
+		task.execute(i.getCurrency(),to); //to is the default currency
 		
 	}
-	
+
 	static class ConvertCurrencyTask extends AsyncTask<String, Void, Float> {
 		
 		ResultListener<Float> lstnr; 
 		CurrencyDbHelper db;
 		ExpenseDbHelper expDb ;
 		IncomeDbHelper incDb;
-	    Context context;
 		Expense e;
 		Income i;
 		Boolean isExpense = true;
 		ProgressDialog pd;
+		boolean update = false;
+		ConnectivityManager cm;
+		       
 		
-		ConvertCurrencyTask(ResultListener<Float> lstnr, CurrencyDbHelper db, Context context, Expense e) {
+		ConvertCurrencyTask(ResultListener<Float> lstnr, Context context, Expense e,boolean update) {
 			this.lstnr = lstnr;
-			this.db = db;
-			this.context = context;
+			this.db = new CurrencyDbHelper(context);
 			this.e = e;
 			expDb = new ExpenseDbHelper(context);
+			this.update = update;
+			cm =(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			pd = new ProgressDialog(context);
 		}
 		
-		ConvertCurrencyTask(ResultListener<Float> lstnr, CurrencyDbHelper db, Context context, Income i) {
+		
+		ConvertCurrencyTask(ResultListener<Float> lstnr,Context context, Income i,boolean update) {
 			this.lstnr = lstnr;
-			this.db = db;
-			this.context = context;
+			this.db = new CurrencyDbHelper(context);
 			this.i = i;
 			incDb = new IncomeDbHelper(context);
 			isExpense = false;
+			this.update = update;
+			cm =(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			pd = new ProgressDialog(context);
 		}
 		
 		@Override
 		protected void onPreExecute() {
-			pd = new ProgressDialog(context);
-			pd.setMessage("Adding...");
+			if(!update) {
+				pd.setMessage("Adding...");
+			} else {
+				pd.setMessage("Saving Changes...");
+			}
 			pd.show();
 		}
 		
@@ -110,16 +118,22 @@ public class CurrencyConverter {
 				} else {
 					e.set_convToDef(rate);
 				}
-				
-				expDb.addExpense(e); 
+				if(!update) {
+					expDb.addExpense(e); 
+				} else {
+					expDb.updateExpense(e, e.getID());
+				}
 			} else {
 				if(rate.isNaN() || rate == -1) {
 					i.set_convToDef(0);	
 				} else {
 					i.set_convToDef(rate);
 				}
-				
-				incDb.addIncome(i); 
+				if(!update) {
+					incDb.addIncome(i); 
+				}else {
+					incDb.updateIncome(i, i.getID());
+				}
 			}
 			return rate;
 			
@@ -257,8 +271,7 @@ public class CurrencyConverter {
 		}
 		
 		public boolean networkPresent() {
-		    ConnectivityManager cm =
-		        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		    
 		    NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 		        return true;

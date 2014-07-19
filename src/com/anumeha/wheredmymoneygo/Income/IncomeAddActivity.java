@@ -135,7 +135,7 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 	 					@Override
 	 					public void OnFaiure(int errCode) {
 	 						endActivity("added");
-	 					}  },i_currency,new Income(i_name,i_desc,i_date,i_currency,amount,i_source));     
+	 					}  },new Income(i_name,i_desc,i_date,i_currency,amount,i_source),false);     
             		endActivity("added");
 				}
 				

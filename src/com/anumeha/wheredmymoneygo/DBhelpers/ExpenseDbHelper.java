@@ -153,6 +153,7 @@ public class ExpenseDbHelper {
 	    values.put(KEY_E_CURRENCY, expense.getCurrency()); // Expense currency
 	    values.put(KEY_E_AMOUNT, expense.getAmount()); // Expense amount  
 	    values.put(KEY_E_CATEGORY1, expense.getCategory1()); // Expense Category1
+	    values.put(KEY_E_CONVRATE, expense.get_convToDef()); // Expense conversion to default rate
   	 
   	    // Updating Row
   	    db.update(TABLE_EXPENSES, values, KEY_E_ID+"="+ id , null);

@@ -11,8 +11,10 @@ import java.util.Locale;
 import com.anumeha.wheredmymoneygo.Category.CategoryCursorLoader;
 import com.anumeha.wheredmymoneygo.Currency.CurrencyCursorLoader;
 import com.anumeha.wheredmymoneygo.DBhelpers.IncomeDbHelper;
+import com.anumeha.wheredmymoneygo.Expense.Expense;
 import com.anumeha.wheredmymoneygo.Income.Income;
 import com.anumeha.wheredmymoneygo.Income.IncomeCursorLoader;
+import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
 import com.anumeha.wheredmymoneygo.Source.SourceCursorLoader;
 import com.example.wheredmymoneygo.R;
 
@@ -59,6 +61,7 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 	CategoryCursorLoader loader;
 	boolean valid = true, noChanges =true;
 	int incId;
+	CurrencyConverter conv;
 	
 	final static int DATE_DIALOG_ID = 999;
 	 @Override
@@ -76,6 +79,7 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 			cancel = (Button)findViewById(R.id.incCancelEdit);
 			cancel.setOnClickListener(this);
 			dbh = new IncomeDbHelper(this);
+			conv = new CurrencyConverter(this);
 			
 			incId = getIntent().getIntExtra("id",0);
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -170,9 +174,21 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 				}
 				
 				
-				if(valid && !noChanges) {								
-					dbh.updateIncome(new Income(i_name_edit,i_desc_edit,i_date_edit,i_currency_edit,amount,i_source),incId);
-            		endActivity("edited");
+				if(valid && !noChanges) {	
+					if(!i_currency_edit.equals(i_currency)) {
+					conv.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+	 					@Override
+	 					public void OnSuccess(Float rate) {
+	 						endActivity("edited");
+	 					}	
+	 					@Override
+	 					public void OnFaiure(int errCode) {
+	 						endActivity("edited");
+	 					}  },new Income(incId,i_name_edit,i_desc_edit,i_date_edit,i_currency_edit,amount,i_source),true); 
+					} else {
+						dbh.updateIncome(new Income(i_name_edit,i_desc_edit,i_date_edit,i_currency_edit,amount,i_source),incId);
+						endActivity("edited");
+					}
 				}
 				
 				else

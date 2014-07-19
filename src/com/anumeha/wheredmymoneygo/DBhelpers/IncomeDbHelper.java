@@ -139,6 +139,7 @@ public class IncomeDbHelper {
 	 	    values.put(KEY_I_CURRENCY, income.getCurrency()); // income currency
 	 	    values.put(KEY_I_AMOUNT, income.getAmount()); // income amount  
 	 	    values.put(KEY_I_SOURCE, income.getSource()); // income Source
+	 	    values.put(KEY_I_CONVRATE, income.get_convToDef()); // Income conversion to default rate
      	 
      	    // Updating Row
      	    db.update(TABLE_INCOME, values, KEY_I_ID+"="+ id , null);

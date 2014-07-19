@@ -11,6 +11,7 @@ import java.util.Locale;
 import com.anumeha.wheredmymoneygo.Category.CategoryCursorLoader;
 import com.anumeha.wheredmymoneygo.Currency.CurrencyCursorLoader;
 import com.anumeha.wheredmymoneygo.DBhelpers.ExpenseDbHelper;
+import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
 import com.example.wheredmymoneygo.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -56,13 +57,14 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 	boolean valid = true, noChanges =true;
 	int expId;
 	
+	CurrencyConverter conv;
 	final static int DATE_DIALOG_ID = 999;
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        
 	        this.setContentView(R.layout.expense_edit_activity);
-        
+	        
 	        category1 = (Spinner)findViewById(R.id.expCategory1Edit);
 	        currency = (Spinner)findViewById(R.id.inputExpenseCurrencyEdit);
 	        expenseDate = (TextView)findViewById(R.id.expenseDateEdit);
@@ -72,6 +74,7 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 			cancel = (Button)findViewById(R.id.expCancelEdit);
 			cancel.setOnClickListener(this);
 			dbh = new ExpenseDbHelper(this);
+			conv = new CurrencyConverter(this);
 			
 			expId = getIntent().getIntExtra("id",0);
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -143,7 +146,7 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 				
 				//currency
 				String e_currency_edit = ((Spinner) findViewById(R.id.inputExpenseCurrencyEdit)).getSelectedItem().toString(); 
-				if(noChanges && !e_currency_edit.trim().equals(e_category1)){
+				if(noChanges && !e_currency_edit.trim().equals(e_currency)){
 					noChanges = false;
 				
 				}
@@ -165,9 +168,22 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 				}
 				
 				
-				if(valid && !noChanges) {								
-					dbh.updateExpense(new Expense(e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1),expId);
-            		endActivity("edited");
+				if(valid && !noChanges) {	
+					if(!e_currency_edit.equals(e_currency)) {
+						conv.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+		 					@Override
+		 					public void OnSuccess(Float rate) {
+		 						endActivity("edited");
+		 					}	
+		 					@Override
+		 					public void OnFaiure(int errCode) {
+		 						endActivity("edited");
+		 					}  },new Expense(expId,e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1),true); 
+					} else {
+						dbh.updateExpense(new Expense(e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1),expId);
+						endActivity("edited");
+					}
+            		
 				}
 				
 				else
