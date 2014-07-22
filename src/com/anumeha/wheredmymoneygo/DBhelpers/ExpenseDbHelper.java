@@ -175,10 +175,9 @@ public class ExpenseDbHelper {
 	public Cursor getCategoriesAndExpenses() {
 		
 		 SQLiteDatabase db = dbh.getWritableDatabase();   	
-		 String [] columns = {KEY_E_CATEGORY1,"SUM("+KEY_E_AMOUNT+")"};
+		 String [] columns = {KEY_E_CATEGORY1,"SUM("+KEY_E_AMOUNT+" * "+KEY_E_CONVRATE+")"};
 		 
-	   	 Cursor c = db.query(TABLE_EXPENSES, columns ,null,null,KEY_E_CATEGORY1,null,null);
-	    	
+	   	 Cursor c = db.query(TABLE_EXPENSES, columns ,null,null,KEY_E_CATEGORY1,null,null);	    	
 	    	return c;
 	}
  

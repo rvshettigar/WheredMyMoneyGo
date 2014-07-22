@@ -54,8 +54,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		//sortByDate.setOnClickListener(this);
 		
 		
-		//listPie = (Button)findViewById(R.id.listPie);
-		//listPie.setOnClickListener(this);
+		listPie = (Button)findViewById(R.id.listPie);
+		listPie.setOnClickListener(this);
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
