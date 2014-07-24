@@ -1,15 +1,23 @@
 package com.anumeha.wheredmymoneygo;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import com.anumeha.wheredmymoneygo.Category.Category;
 import com.anumeha.wheredmymoneygo.Currency.Currency;
 import com.anumeha.wheredmymoneygo.Source.Source;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
 
 public class DBHandler extends SQLiteOpenHelper{
+	
+	AssetManager assetManager;
 	/** class variables  - database**/
 	private static final int DATABASE_VERSION = 1;	  
 	private static final String DATABASE_NAME = "WMMGDatabase";
@@ -78,9 +86,15 @@ public class DBHandler extends SQLiteOpenHelper{
     private static final String KEY_A_FREQUENCY = "frequency"; //one time - weekly -monthly or annual
     private static final String KEY_A_DATE = "recurrence_date";
  
+    /** Colors Table**/
+    private static final String TABLE_COLORS = "Colors"; 
+    
+    private static final String KEY_Co_COLOR = "color_code";
+    private static final String KEY_Co_TAKEN = "taken";  
 
 	 public DBHandler(Context context) {
 	        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	        assetManager = context.getAssets();
 	    }
 	 
 	 /** Creating tables **/
@@ -153,11 +167,17 @@ public class DBHandler extends SQLiteOpenHelper{
 	                + KEY_A_DATE + " datetime" + ")";
 	        db.execSQL(CREATE_ALERTS_TABLE);
 **/
-	        
+	       
+	        //Colors Table    
+	        String CREATE_COLORS_TABLE = "CREATE TABLE " + TABLE_COLORS + "("
+	                + KEY_Co_COLOR + " INTEGER PRIMARY KEY," 
+	                + KEY_Co_TAKEN + " TEXT" + ")";
+	        db.execSQL(CREATE_COLORS_TABLE);
 	        
 	      populateCategories(db); //pre populate the categories
 	      populateSources(db); //pre populate the sources
 	      populateCurrency(db); //pre populate the currency
+	      populateColors(db); //pre populate the currency
 	    }
 	    
 	    // Upgrading database
@@ -238,6 +258,8 @@ public class DBHandler extends SQLiteOpenHelper{
 	    	
 	    }
 	    
+	    
+	    
 	    public void addCategory(Category category, SQLiteDatabase db) {
 			 
 		 
@@ -279,6 +301,55 @@ public class DBHandler extends SQLiteOpenHelper{
 			
 			 
 		 }
+	    
+		
+	    private void populateColors(SQLiteDatabase db) {
+	    	
+	    	//Read the colors file from 
+	    	try {
+				BufferedReader br = new BufferedReader(new InputStreamReader(assetManager.open("colors.txt")));
+				String line;
+				while( (line = br.readLine())!= null ){
+					String[] lineElems = line.split(",");
+					if(lineElems.length<3)
+						continue;
+					int red = Integer.parseInt(lineElems[0]);
+					int green = Integer.parseInt(lineElems[1]);
+					int blue = Integer.parseInt(lineElems[2]);
+					
+					if(validateColorComponent(red)
+							&& validateColorComponent(green)
+							&& validateColorComponent(blue)){
+						System.out.println("RGB: (" +red + "," + green + "," + blue + ")=" + Color.rgb(red, green, blue) );
+						addColor(Color.rgb(red, green, blue), db);
+					}
+					
+				}
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+	    	System.out.println("populating colors");
+	    	
+	    }
+	    
+	    public void addColor(int color_code, SQLiteDatabase db) {
+			 
+			ContentValues values = new ContentValues();
+			values.put(KEY_Co_COLOR, color_code);
+			values.put(KEY_Co_TAKEN, "false"); 
+			 
+			// Inserting Row
+			db.insert(TABLE_COLORS, null, values);
+			
+			 
+		}
+	    
+	    public boolean validateColorComponent(int colorComponent){
+	    	if(colorComponent >= 0 && colorComponent <= 256)
+	    		return true;
+	    	else
+	    		return false;
+	    }
 	    
 	    
 
