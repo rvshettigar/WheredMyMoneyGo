@@ -23,6 +23,7 @@ public class CategoryDbHelper {
 	 private static final String KEY_C_NAME = "c_name";
 	 private static final String KEY_C_BUDGET = "c_budget";
 	 private static final String KEY_C_FREQUENCY = "c_frequency";
+	 public static final String KEY_C_COLOR = "c_color";
 	
 
 	 private DBHandler dbh;
@@ -36,11 +37,15 @@ public class CategoryDbHelper {
 	 public void addCategory(Category category) {
 		 
 		 SQLiteDatabase   db = dbh.getWritableDatabase();
+		 ColorDbHelper colorDb = new ColorDbHelper(db);
+		 int color = colorDb.getFirstAvailableColor();
 		 
 		 ContentValues values = new ContentValues();
 		 values.put(KEY_C_NAME, category.getName()); // Category Name
 		 values.put(KEY_C_BUDGET, category.getBudget()); // Category budget
 		 values.put(KEY_C_FREQUENCY, category.getFrequency()); // Category frequency
+		 values.put(KEY_C_COLOR, color ); //color for category
+		 colorDb.updateColor(color, "true");
 		 
 		 // Inserting Row
 		 db.insert(TABLE_CATEGORY, null, values);

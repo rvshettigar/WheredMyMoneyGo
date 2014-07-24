@@ -1,11 +1,8 @@
 package com.anumeha.wheredmymoneygo;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,19 +19,17 @@ public class PieChart extends Drawable {
 	
 	private int numColors;
 	Set<Integer> colors;
-	Context context; 
+
 	View v; 
 	Cursor c;
 	RectF pie_bounds;
 	Paint paint;
 	
-	public PieChart(Context ctx, View v, Cursor c) {
+	public PieChart(View v, Cursor c) {
 		
 		numColors = c.getCount();
 		colors = new HashSet<Integer>();
 		paint = new Paint();
-		getRandomColors();
-		this.context = ctx;
 		this.v =v;
 		this.c =c; 
 		
@@ -75,17 +70,14 @@ public class PieChart extends Drawable {
 		
 		float sum =0;
 		//sum of amounts
-		int i =0;
 		c.moveToFirst();
 		do { 
 			sum += c.getFloat(1);			
 		} while(c.moveToNext());
 		
-		Random rnd =new Random();
 		float startAngle =0; 
 		c.moveToFirst();
 		float nextStartAngle;
-		Iterator<Integer> itr  = colors.iterator(); 
 		do { 
 			float catAmount = c.getFloat(1);
 			
@@ -94,9 +86,9 @@ public class PieChart extends Drawable {
 			float endAngle = 360*(catAmount/sum);
 			nextStartAngle = startAngle + endAngle;
 			
-			System.out.println("Color size is" + colors.size());
+		//	System.out.println("Color size is" + colors.size());
 			
-			paint.setColor(itr.next());
+			paint.setColor((int) c.getFloat(2));
 			paint.setAntiAlias(true);
 			paint.setStyle(Paint.Style.FILL);
 			paint.setStrokeWidth(0.5f);

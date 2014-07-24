@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.anumeha.wheredmymoneygo.PieChart;
-import com.anumeha.wheredmymoneygo.DBhelpers.ColorDbHelper;
 import com.example.wheredmymoneygo.R;
 
 import android.app.Activity;
@@ -18,16 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ExpensePieFragment extends Fragment implements LoaderCallbacks<Cursor>{
 	
 	View view;
 	List<String> categories;
 	ImageView imgView;
-	Activity activity;
 	PieChart pie;
 	TextView noExp;
+	ExpenseCursorLoader expLoad;
 	@Override
 	  public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	      Bundle savedInstanceState) {
@@ -47,14 +45,14 @@ public class ExpensePieFragment extends Fragment implements LoaderCallbacks<Curs
 
 	@Override
     public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = activity;      
+        super.onAttach(activity);   
+        expLoad = new ExpenseCursorLoader(activity,3);
     }
 	
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-	    return new ExpenseCursorLoader(activity, 3); //to get expenses and categories
+	    return expLoad; //to get expenses and categories
 	}
 	 
 	@Override
@@ -62,10 +60,8 @@ public class ExpensePieFragment extends Fragment implements LoaderCallbacks<Curs
 		
 		if(cursor.getCount()!= 0) {
 			noExp.setVisibility(0);
-			pie = new PieChart(activity,imgView,cursor);
+			pie = new PieChart(imgView,cursor);
 			imgView.setImageDrawable(pie);
-			ColorDbHelper cdh = new ColorDbHelper(activity.getApplicationContext());
-			Toast.makeText(activity.getApplicationContext(), String.valueOf(cdh.getFirstAvailableColor()), Toast.LENGTH_SHORT).show();
 		}
 		else {
 			noExp.setText("No expenses present!");

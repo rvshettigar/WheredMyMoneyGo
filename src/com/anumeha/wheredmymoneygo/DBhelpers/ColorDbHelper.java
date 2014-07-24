@@ -17,11 +17,17 @@ public class ColorDbHelper {
 
 	 
 	 private DBHandler dbh;
+	 private SQLiteDatabase sqldb = null;
 	
 	 public ColorDbHelper(Context context){
 			
 		dbh = new DBHandler(context);			
 	 }
+	 
+	 public ColorDbHelper(SQLiteDatabase sqldb){
+			
+			this.sqldb = sqldb; 			
+	}
 	 
 	 // add a color 
 	 public void addColor(int color_code, String taken) {
@@ -38,7 +44,10 @@ public class ColorDbHelper {
 	 }	 
 	 
 	 public void updateColor(int color_code, String taken) {
-    	SQLiteDatabase db = dbh.getWritableDatabase();
+		 SQLiteDatabase db = sqldb; //for pre population
+	        if(db == null) {
+	        	db = dbh.getReadableDatabase();
+	        }
     	 
   	    ContentValues values = new ContentValues();
   	    values.put(KEY_Co_COLOR, color_code); // Category Name
@@ -46,7 +55,9 @@ public class ColorDbHelper {
   	   
   	    // Updating Row
   	    db.update(TABLE_COLORS, values, KEY_Co_COLOR+"=\""+ color_code+"\"", null);
-  	    db.close(); // Closing database connection
+  	    if(sqldb == null) {
+  	    	db.close(); // Closing database connection
+  	    }
  
    }
 	 
@@ -54,7 +65,7 @@ public class ColorDbHelper {
 	 public Boolean colorExists(int color_code) {
         // Select All Query
         String selectQuery = "SELECT "+KEY_Co_COLOR+" FROM " + TABLE_COLORS + " WHERE "+KEY_Co_COLOR+"=\"" + color_code + "\"";
-     
+        
         SQLiteDatabase db = dbh.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         
@@ -70,8 +81,10 @@ public class ColorDbHelper {
 	 public int getFirstAvailableColor() {
         // Select All Query
         String selectQuery = "SELECT "+KEY_Co_COLOR+" FROM " + TABLE_COLORS + " WHERE "+KEY_Co_TAKEN+"=\"false\"";
-     
-        SQLiteDatabase db = dbh.getReadableDatabase();
+        SQLiteDatabase db = sqldb; //for pre population
+        if(db == null) {
+        	db = dbh.getReadableDatabase();
+        }
         Cursor cursor = db.rawQuery(selectQuery, null);
         
         if(cursor.getCount() == 0)

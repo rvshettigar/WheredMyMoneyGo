@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 import com.anumeha.wheredmymoneygo.Category.Category;
 import com.anumeha.wheredmymoneygo.Currency.Currency;
+import com.anumeha.wheredmymoneygo.DBhelpers.ColorDbHelper;
 import com.anumeha.wheredmymoneygo.Source.Source;
 
 import android.content.ContentValues;
@@ -47,12 +48,13 @@ public class DBHandler extends SQLiteOpenHelper{
     private static final String KEY_I_CONVRATE = "i_convrate";
     
     /** Category Table **/
-    private static final String TABLE_CATEGORY	 = "Category";
+    public static final String TABLE_CATEGORY	 = "Category";
  
     private static final String KEY_C_ID = "_id";
-    private static final String KEY_C_NAME = "c_name";
+    public static final String KEY_C_NAME = "c_name";
     private static final String KEY_C_BUDGET = "c_budget";
     private static final String KEY_C_FREQUENCY = "c_frequency";
+    public static final String KEY_C_COLOR = "c_color";
         
     /** Sources Table **/
     private static final String TABLE_SOURCE	 = "Source";
@@ -131,7 +133,8 @@ public class DBHandler extends SQLiteOpenHelper{
 	                + KEY_C_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," 
 	        		+ KEY_C_NAME + " TEXT," 
 	                + KEY_C_BUDGET + " REAL," 
-	        		+ KEY_C_FREQUENCY + " TEXT"
+	        		+ KEY_C_FREQUENCY + " TEXT,"
+	        		+ KEY_C_COLOR + " REAL"
 	                + ")";
 	        db.execSQL(CREATE_CATEGORY_TABLE);
 	        
@@ -173,11 +176,13 @@ public class DBHandler extends SQLiteOpenHelper{
 	                + KEY_Co_COLOR + " INTEGER PRIMARY KEY," 
 	                + KEY_Co_TAKEN + " TEXT" + ")";
 	        db.execSQL(CREATE_COLORS_TABLE);
-	        
-	      populateCategories(db); //pre populate the categories
+	       
+	      
 	      populateSources(db); //pre populate the sources
 	      populateCurrency(db); //pre populate the currency
-	      populateColors(db); //pre populate the currency
+	      populateColors(db); //pre populate the colors 
+	      populateCategories(db); //pre populate the categories
+	      
 	    }
 	    
 	    // Upgrading database
@@ -244,7 +249,7 @@ public class DBHandler extends SQLiteOpenHelper{
 	    	cur = new Currency ("AED",0,"","","");
 	    	addCurrency(cur,db);
 	    	
-	    	System.out.println("populating categories");
+	    	System.out.println("populating currency");
 	    	
 	    }
 	    
@@ -262,11 +267,15 @@ public class DBHandler extends SQLiteOpenHelper{
 	    
 	    public void addCategory(Category category, SQLiteDatabase db) {
 			 
-		 
+	    	 ColorDbHelper colorDb = new ColorDbHelper(db);
+	    	 int color = colorDb.getFirstAvailableColor();
+	    	 
 			 ContentValues values = new ContentValues();
 			 values.put(KEY_C_NAME, category.getName()); // Category Name
 			 values.put(KEY_C_BUDGET, category.getBudget()); // Category budget
 			 values.put(KEY_C_FREQUENCY, category.getFrequency()); // Category frequency
+			 values.put(KEY_C_COLOR, color ); //color for category
+			 colorDb.updateColor(color, "true");
 			 
 			 // Inserting Row
 			 db.insert(TABLE_CATEGORY, null, values);
@@ -282,7 +291,7 @@ public class DBHandler extends SQLiteOpenHelper{
 			 values.put(KEY_Cu_CONVRATE, cur.getConversionRate()); // Currency conversion rate
 			 values.put(KEY_Cu_COUNTRY, cur.getCountry()); // Currency country
 			 values.put(KEY_Cu_SYMBOL, cur.getConversionRate()); // Currency symbol - $
-			 values.put(KEY_Cu_TS, cur.getCountry()); // Currency country 
+			 values.put(KEY_Cu_TS, cur.getTimeStamp()); // Currency time stamp
 			 
 			 // Inserting Row
 			 db.insert(TABLE_CURRENCY, null, values);
@@ -320,7 +329,7 @@ public class DBHandler extends SQLiteOpenHelper{
 					if(validateColorComponent(red)
 							&& validateColorComponent(green)
 							&& validateColorComponent(blue)){
-						System.out.println("RGB: (" +red + "," + green + "," + blue + ")=" + Color.rgb(red, green, blue) );
+						//System.out.println("RGB: (" +red + "," + green + "," + blue + ")=" + Color.rgb(red, green, blue) );
 						addColor(Color.rgb(red, green, blue), db);
 					}
 					
