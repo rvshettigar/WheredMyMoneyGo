@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.anumeha.wheredmymoneygo.PieChart;
+import com.anumeha.wheredmymoneygo.DBhelpers.ColorDbHelper;
 import com.example.wheredmymoneygo.R;
 
 import android.app.Activity;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ExpensePieFragment extends Fragment implements LoaderCallbacks<Cursor>{
 	
@@ -62,6 +64,8 @@ public class ExpensePieFragment extends Fragment implements LoaderCallbacks<Curs
 			noExp.setVisibility(0);
 			pie = new PieChart(activity,imgView,cursor);
 			imgView.setImageDrawable(pie);
+			ColorDbHelper cdh = new ColorDbHelper(activity.getApplicationContext());
+			Toast.makeText(activity.getApplicationContext(), String.valueOf(cdh.getFirstAvailableColor()), Toast.LENGTH_SHORT).show();
 		}
 		else {
 			noExp.setText("No expenses present!");
