@@ -50,7 +50,7 @@ public class DBHandler extends SQLiteOpenHelper{
     /** Category Table **/
     public static final String TABLE_CATEGORY	 = "Category";
  
-    private static final String KEY_C_ID = "_id";
+    public static final String KEY_C_ID = "_id";
     public static final String KEY_C_NAME = "c_name";
     private static final String KEY_C_BUDGET = "c_budget";
     private static final String KEY_C_FREQUENCY = "c_frequency";

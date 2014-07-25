@@ -16,9 +16,6 @@ import android.view.View;
 
 public class PieChart extends Drawable {
 	
-	
-	private int numColors;
-	Set<Integer> colors;
 
 	View v; 
 	Cursor c;
@@ -27,33 +24,11 @@ public class PieChart extends Drawable {
 	
 	public PieChart(View v, Cursor c) {
 		
-		numColors = c.getCount();
-		colors = new HashSet<Integer>();
 		paint = new Paint();
 		this.v =v;
 		this.c =c; 
 		
 			
-	}
-	
-
-	private void getRandomColors() {
-		Random rnd = new Random ();
-		
-		for(int i =0; i< numColors; i++) {
-			int r = rnd.nextInt(256);
-			int g = rnd.nextInt(256);
-			int b = rnd.nextInt(256);
-			
-			int color = Color.rgb(r,g,b);
-			
-			if(colors.contains(color)){
-				getRandomColors();
-			}
-			else {
-				colors.add(color);
-			}
-		}
 	}
 
 
@@ -72,14 +47,14 @@ public class PieChart extends Drawable {
 		//sum of amounts
 		c.moveToFirst();
 		do { 
-			sum += c.getFloat(1);			
+			sum += c.getFloat(2);			
 		} while(c.moveToNext());
 		
 		float startAngle =0; 
 		c.moveToFirst();
 		float nextStartAngle;
 		do { 
-			float catAmount = c.getFloat(1);
+			float catAmount = c.getFloat(2);
 			
 			if(catAmount ==0) 
 				continue;
@@ -88,7 +63,7 @@ public class PieChart extends Drawable {
 			
 		//	System.out.println("Color size is" + colors.size());
 			
-			paint.setColor((int) c.getFloat(2));
+			paint.setColor((int) c.getFloat(3));
 			paint.setAntiAlias(true);
 			paint.setStyle(Paint.Style.FILL);
 			paint.setStrokeWidth(0.5f);

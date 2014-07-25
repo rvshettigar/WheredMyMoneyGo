@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.anumeha.wheredmymoneygo.DBhelpers.CurrencyDbHelper;
 import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
-import com.example.wheredmymoneygo.*;
+import com.example.wheredmymoneygo.R;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;

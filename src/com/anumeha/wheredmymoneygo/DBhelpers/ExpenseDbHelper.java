@@ -175,7 +175,7 @@ public class ExpenseDbHelper {
 	public Cursor getCategoriesAndExpenses() {
 		
 		 SQLiteDatabase db = dbh.getWritableDatabase();   	
-		 String [] columns = {KEY_E_CATEGORY1,"SUM("+KEY_E_AMOUNT+" * "+KEY_E_CONVRATE+")",DBHandler.KEY_C_COLOR};
+		 String [] columns = {DBHandler.TABLE_CATEGORY+"."+DBHandler.KEY_C_ID,KEY_E_CATEGORY1,"SUM("+KEY_E_AMOUNT+" * "+KEY_E_CONVRATE+")",DBHandler.KEY_C_COLOR};
 		 String table = TABLE_EXPENSES + " JOIN "+ DBHandler.TABLE_CATEGORY +" ON "+ KEY_E_CATEGORY1 +" = "+ DBHandler.KEY_C_NAME;
 	   	 Cursor c = db.query(table, columns ,null,null,KEY_E_CATEGORY1,null,null);	    	
 	    	return c;

@@ -52,7 +52,7 @@
         android:id="@+id/convertCur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="convert to default"/>
+        android:text="convert to defaulty"/>
      
      <Button
         android:id="@+id/listPie"
