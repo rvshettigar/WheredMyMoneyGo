@@ -1,9 +1,5 @@
 package com.anumeha.wheredmymoneygo;
 
-import java.util.Locale;
-
-import com.anumeha.wheredmymoneygo.DBhelpers.ExpenseDbHelper;
-import com.anumeha.wheredmymoneygo.Expense.Expense;
 import com.anumeha.wheredmymoneygo.Expense.ExpenseListFragment;
 import com.anumeha.wheredmymoneygo.Expense.ExpenseOptionsFragment;
 import com.anumeha.wheredmymoneygo.Expense.ExpensePieFragment;
@@ -21,16 +17,12 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+
 
 public class MainActivity extends FragmentActivity implements OnClickListener{
 
@@ -257,7 +249,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 
 	            // If not, instantiate and add it to the activity
 	            list = Fragment.instantiate(activity, listClass.getName());
-	            ft.add(R.id.fragment_expense_list1, list, tag2);
+	            ft.add(R.id.fragment_cashflow, list, tag2);
 	           
 	        } else{
 	            // If it exists, simply attach it in order to show it
@@ -378,7 +370,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 					editor.commit();
 					f = Fragment.instantiate(MainActivity.this, ExpensePieFragment.class.getName());
 					ft = fm.beginTransaction();
-					ft.replace(R.id.fragment_expense_list1, f, "expense_pie");
+					ft.replace(R.id.fragment_cashflow, f, "expense_pie");
 					ft.commit();
 				}
 				else {
@@ -387,7 +379,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 					editor.commit();
 					f = Fragment.instantiate(MainActivity.this, ExpenseListFragment.class.getName());
 					ft = fm.beginTransaction();
-					ft.replace(R.id.fragment_expense_list1, f, "expense");
+					ft.replace(R.id.fragment_cashflow, f, "expense");
 					ft.commit();
 				}
 				
