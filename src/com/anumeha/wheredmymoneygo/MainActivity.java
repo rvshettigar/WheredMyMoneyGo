@@ -31,7 +31,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 	private int INCOME_ADDED = 00;
 	private int EXPENSE_ADDED = 10;
 	private static int EDIT_INCOME = 01; //0 FOR INCOME 1 FOR EDIT	
+	private static String EXPENSE_TAG = "expense";
+	private static String INCOME_TAG = "income";
+	
 	private Button convert,listPie, sortByDate;
+	private MyTabListener expenseTab,incomeTab,IvETab;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,8 +58,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		
 		// add the income, expense and income vs expense tabs
-		actionBar.addTab(actionBar.newTab().setText(R.string.title_expensetab).setTabListener(new TwoFragTabListener(this, "tag1", "expense", ExpenseOptionsFragment.class, ExpenseListFragment.class )));
-		actionBar.addTab(actionBar.newTab().setText(R.string.title_incometab).setTabListener(new TwoFragTabListener(this, "tag3", "income", ExpenseOptionsFragment.class, IncomeListFragment.class )));
+		expenseTab = new MyTabListener(this,EXPENSE_TAG,ExpenseListFragment.class);
+		incomeTab = new MyTabListener(this,INCOME_TAG,IncomeListFragment.class);
+		actionBar.addTab(actionBar.newTab().setText(R.string.title_expensetab).setTabListener(expenseTab));
+		actionBar.addTab(actionBar.newTab().setText(R.string.title_incometab).setTabListener(incomeTab));
 	//	actionBar.addTab(actionBar.newTab().setText(R.string.title_expvsinctab).setTabListener(new TwoFragTabListener(this, "tag5", "evi", ExpenseOptionsFragment.class, ExpenseListFragment.class )));
 		}
 	
@@ -136,25 +142,26 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 			  switch(requestCode) {
 			  case 00: 
 				  if (data.hasExtra("result") && data.getExtras().getString("result").equals("added")) {	
-				    	IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag("income");
+					  //add part about list/pie
+				    	IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag(INCOME_TAG);
 						inc.restartLoader();	  
 				    }
 				  break;				  
 			  
 			  case 10:  if (data.hasExtra("result") && data.getExtras().getString("result").equals("added")) { 
-					ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag("expense");
+					ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag(EXPENSE_TAG);
 					exp.restartLoader();
 				  }
 			  break;
 			  case 01: 
 				  if (data.hasExtra("result") && data.getExtras().getString("result").equals("edited")) {	
-				    	IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag("income");
+				    	IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag(INCOME_TAG);
 						inc.restartLoader();	  
 				    }
 				  break;				  
 			  
 			  case 11:  if (data.hasExtra("result") && data.getExtras().getString("result").equals("edited")) { 
-					ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag("expense");
+					ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag(EXPENSE_TAG);
 					exp.restartLoader();
 				  }
 			  break;
@@ -209,63 +216,44 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 	
 	
 
-	public static class TwoFragTabListener implements
+	public static class MyTabListener implements
 	ActionBar.TabListener {
 		
-		private Fragment options;
-		private Fragment list;
 		private Activity activity;
-		private String tag1;
-		private String tag2;
-		private Class optionsClass;
-		private Class listClass;
+		private String tag;
+		private Class fragClass;
+		private Fragment currentFrag;
 		
 		
-		public TwoFragTabListener(Activity activity, String tag1, String tag2, Class optionsClass, Class listClass)
+		public MyTabListener(Activity activity, String tag, Class fragClass)
 		{
-			this.tag1 = tag1;
-			this.tag2 = tag2;
-			this.optionsClass = optionsClass;
-			this.listClass = listClass;
+			this.tag = tag;
+			this.fragClass = fragClass;
 			this.activity = activity;			
 		}
 		
 		@Override
 		public void onTabSelected(ActionBar.Tab tab,
 				FragmentTransaction ft) {
-			
-			 // Check if the fragment is already initialized
-	        if (options == null) {
-	            // If not, instantiate and add it to the activity
-	            options = Fragment.instantiate(activity, optionsClass.getName());
-	            ft.add(R.id.fragment_e_options1, options, tag1);
-	        } else {
-	            // If it exists, simply attach it in order to show it
-	            ft.attach(options);
-	        }
 
 	        // Check if the fragment is already initialized
-	        if (list == null) {
-
+	        if (currentFrag == null) {
 	            // If not, instantiate and add it to the activity
-	            list = Fragment.instantiate(activity, listClass.getName());
-	            ft.add(R.id.fragment_cashflow, list, tag2);
+	            currentFrag = Fragment.instantiate(activity, fragClass.getName());
+	            ft.add(R.id.fragment_cashflow, currentFrag, tag);
 	           
 	        } else{
 	            // If it exists, simply attach it in order to show it
-	            ft.attach(list);
-	        }
-	        
-	        currentTab = list.getTag();
-		
+	            ft.attach(currentFrag);
+	        }	      
+	        currentTab = tag;	
 		}
 
 		@Override
 		public void onTabUnselected(ActionBar.Tab tab,
 				FragmentTransaction ft) {
-			if(list!=null)
-			{
-				ft.detach(list);
+			if(currentFrag!=null){	
+				ft.detach(currentFrag);
 			}
 		}
 
@@ -274,9 +262,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 				FragmentTransaction fragmentTransaction) {
 		}
 		
+		public void setCurrentFrag(Fragment f){
+				currentFrag = f;
+		}
+		
 	}
-
-
 
 
 	@Override
@@ -329,7 +319,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		if(v.getId() == R.id.convertCur) {
 		
 			
-			if(currentTab.equals("expense")) {
+			if(currentTab.equals(EXPENSE_TAG)) {
 				if(prefs.getString("exp_conv", "off").equals("off")) {
 					editor.putString("exp_conv", "on");
 					b.setText("convert to Original");					
@@ -363,7 +353,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 			Fragment f;
 			FragmentTransaction ft;
 			
-			if(currentTab.equals("expense")) {
+			if(currentTab.equals(EXPENSE_TAG)) {
 				if(prefs.getString("exp_cur_viewAs", "list").equals("list")) {
 					editor.putString("exp_cur_viewAs", "pie");
 					b.setText("List");	
@@ -371,6 +361,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 					f = Fragment.instantiate(MainActivity.this, ExpensePieFragment.class.getName());
 					ft = fm.beginTransaction();
 					ft.replace(R.id.fragment_cashflow, f, "expense_pie");
+					expenseTab.setCurrentFrag(f);
 					ft.commit();
 				}
 				else {
@@ -380,6 +371,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 					f = Fragment.instantiate(MainActivity.this, ExpenseListFragment.class.getName());
 					ft = fm.beginTransaction();
 					ft.replace(R.id.fragment_cashflow, f, "expense");
+					expenseTab.setCurrentFrag(f);
 					ft.commit();
 				}
 				
