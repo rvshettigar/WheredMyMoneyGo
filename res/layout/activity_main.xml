@@ -65,7 +65,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
     <FrameLayout
-        android:id="@+id/fragment_expense_list1"
+        android:id="@+id/fragment_cashflow"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
     

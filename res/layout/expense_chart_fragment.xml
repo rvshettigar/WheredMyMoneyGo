@@ -12,6 +12,7 @@
 	 <ImageView
 	     android:id="@+id/expPieChart"
 	     android:layout_width="fill_parent"
+	     android:layout_height="fill_parent"
 	     android:adjustViewBounds="false"
 	     android:background="#FFFFFF"
 	     android:scaleType="center" />
