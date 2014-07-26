@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -66,6 +67,7 @@ public class ExpensePieFragment extends Fragment implements LoaderCallbacks<Curs
 		if(cursor.getCount()!= 0) {
 			noExp.setVisibility(0);
 			pie = new PieChart(imgView,cursor);
+			imgView.setLayoutParams(new LayoutParams(imgView.getMeasuredHeight(),imgView.getMeasuredHeight()));
 			imgView.setImageDrawable(pie);
 			legendAdapter = new PieLegendCursorAdapter(getActivity(),R.layout.pie_legend_row,cursor);
 			legend.setAdapter(legendAdapter);
