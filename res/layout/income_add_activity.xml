@@ -27,7 +27,8 @@
             android:id="@+id/inputIncomeName"
             android:layout_width="190dp"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName" >
+            android:inputType="textPersonName"
+            android:maxLines="1" >
             
              <requestFocus />
 
@@ -78,7 +79,8 @@
             android:id="@+id/inputIncomeAmount"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-             >
+            android:inputType="numberDecimal"
+            android:maxLines="1" >
 
         </EditText>
         
