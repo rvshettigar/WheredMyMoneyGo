@@ -46,8 +46,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		convert = (Button)findViewById(R.id.convertCur);
 		convert.setOnClickListener(this);
 		
-		//sortByDate = (Button)findViewById(R.id.sortByDate);
-		//sortByDate.setOnClickListener(this);
+		sortByDate = (Button)findViewById(R.id.sortByDate);
+		sortByDate.setOnClickListener(this);
 		
 		
 		listPie = (Button)findViewById(R.id.listPie);
@@ -253,6 +253,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		public void onTabUnselected(ActionBar.Tab tab,
 				FragmentTransaction ft) {
 			if(currentFrag!=null){	
+				String tag = currentFrag.getTag();
 				ft.detach(currentFrag);
 			}
 		}
@@ -277,7 +278,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 	      Button b = (Button)v;
 	      if(v.getId() == R.id.sortByDate) { 
 	    	  
-	    	  if(currentTab.equals("expense")) {
+	    	  if(currentTab.equals(EXPENSE_TAG)) {
 	    		  
 	    		  String currentOrder = prefs.getString("exp_cur_sortOrder","DESC");
 	    		  if(currentOrder.equals("DESC")) {

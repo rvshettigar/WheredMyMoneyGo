@@ -12,10 +12,11 @@
 	 <ImageView
 	     android:id="@+id/expPieChart"
 	     android:layout_width="fill_parent"
-	     android:layout_height="fill_parent"
+	     android:layout_height="200dp"
 	     android:adjustViewBounds="false"
 	     android:background="#FFFFFF"
-	     android:scaleType="center" />
+	     android:scaleType="center" 
+	     android:layout_gravity="center_horizontal" />
 	 <ListView
         android:id="@+id/legendListView"
         android:layout_width="match_parent"

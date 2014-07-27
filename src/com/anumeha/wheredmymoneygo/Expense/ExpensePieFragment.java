@@ -66,9 +66,6 @@ public class ExpensePieFragment extends Fragment implements LoaderCallbacks<Curs
 		if(cursor.getCount()!= 0) {
 			noExp.setVisibility(0);
 			pie = new PieChart(imgView,cursor);
-			ViewGroup.LayoutParams params = imgView.getLayoutParams();
-			params.height = imgView.getWidth();
-			imgView.requestLayout();
 			imgView.setImageDrawable(pie);
 			legendAdapter = new PieLegendCursorAdapter(getActivity(),R.layout.pie_legend_row,cursor);
 			legend.setAdapter(legendAdapter);

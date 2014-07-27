@@ -41,7 +41,7 @@ public class PieChart extends Drawable {
 		System.out.println("Height" + view_w);
 		
 		//chart area rectangle 
-		pie_bounds= new RectF(0.30f*view_w,0.1f*view_h, 0.70f*view_w, 0.5f*view_h);
+		pie_bounds= new RectF(0.20f*view_w,0.1f*view_h, 0.8f*view_w, 0.8f*view_h);
 		
 		float sum =0;
 		//sum of amounts
