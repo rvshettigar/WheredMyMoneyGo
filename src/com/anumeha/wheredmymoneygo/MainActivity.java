@@ -1,7 +1,6 @@
 package com.anumeha.wheredmymoneygo;
 
 import com.anumeha.wheredmymoneygo.Expense.ExpenseListFragment;
-import com.anumeha.wheredmymoneygo.Expense.ExpenseOptionsFragment;
 import com.anumeha.wheredmymoneygo.Expense.ExpensePieFragment;
 import com.anumeha.wheredmymoneygo.Income.IncomeListFragment;
 import com.example.wheredmymoneygo.R;
@@ -21,20 +20,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 
-public class MainActivity extends FragmentActivity implements OnClickListener{
+public class MainActivity extends FragmentActivity implements OnClickListener, OnItemSelectedListener{
 
 
 	private static String currentTab ;
+	private static Spinner sortOrder;
 	private int INCOME_ADDED = 00;
 	private int EXPENSE_ADDED = 10;
 	private static int EDIT_INCOME = 01; //0 FOR INCOME 1 FOR EDIT	
 	private static String EXPENSE_TAG = "expense";
 	private static String INCOME_TAG = "income";
 	
-	private Button convert,listPie, sortByDate;
+	private Button convert,listPie;
 	private MyTabListener expenseTab,incomeTab,IvETab;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +49,19 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		
 		convert = (Button)findViewById(R.id.convertCur);
 		convert.setOnClickListener(this);
-		
-		sortByDate = (Button)findViewById(R.id.sortByDate);
-		sortByDate.setOnClickListener(this);
-		
-		
+	
 		listPie = (Button)findViewById(R.id.listPie);
 		listPie.setOnClickListener(this);
+		
+		sortOrder = (Spinner)findViewById(R.id.sortOrder);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+		        R.array.sort_spinner_items, android.R.layout.simple_spinner_item);
+		// Specify the layout to use when the list of choices appears
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		// Apply the adapter to the spinner
+		sortOrder.setAdapter(adapter);
+		sortOrder.setOnItemSelectedListener(this);
+		
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -225,8 +235,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		private Fragment currentFrag;
 		
 		
-		public MyTabListener(Activity activity, String tag, Class fragClass)
-		{
+		public MyTabListener(Activity activity, String tag, Class fragClass){
 			this.tag = tag;
 			this.fragClass = fragClass;
 			this.activity = activity;			
@@ -253,7 +262,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		public void onTabUnselected(ActionBar.Tab tab,
 				FragmentTransaction ft) {
 			if(currentFrag!=null){	
-				String tag = currentFrag.getTag();
 				ft.detach(currentFrag);
 			}
 		}
@@ -276,47 +284,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 		 SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 	      Editor editor = prefs.edit();
 	      Button b = (Button)v;
-	      if(v.getId() == R.id.sortByDate) { 
-	    	  
-	    	  if(currentTab.equals(EXPENSE_TAG)) {
-	    		  
-	    		  String currentOrder = prefs.getString("exp_cur_sortOrder","DESC");
-	    		  if(currentOrder.equals("DESC")) {
-	    			  editor.putString("exp_cur_sortOrder","ASC");
-	    		      b.setText("View in Descending"); }
-	    		  else {
-	    			  editor.putString("exp_cur_sortOrder","DESC");
-	    		      b.setText("View in Ascending"); }
-	    		  
-	    		  ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag("expense");
-					exp.restartLoader();
-	    		  
-	    		  editor.commit();
-	    		 
-	    		  
-	    	  } else {
-	    		  
-	    		  String currentOrder = prefs.getString("inc_cur_sortOrder","DESC");
-	    		  if(currentOrder.equals("DESC")) {
-	    			  editor.putString("inc_cur_sortOrder","ASC");
-	    		      b.setText("View in Descending"); }
-	    		  else {
-	    			  editor.putString("inc_cur_sortOrder","DESC");
-	    		       b.setText("View in Ascending"); }
-	    		  
-	    		  IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag("income");
-					inc.restartLoader();
-	    		      
-	    		  editor.commit();
-	    		  
-	    	  }
-	    	  
-	    	  
-	    	  
-	      }
-	      
-	      
-	      
+ 
 		if(v.getId() == R.id.convertCur) {
 		
 			
@@ -393,6 +361,63 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 			
 			
 		}
+		
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View v, int pos,
+			long arg3) {
+		String item = (String)parent.getSelectedItem();
+		String sortBy = item.split(" ")[0].trim();
+		String order = item.split(" ")[2].trim();
+		SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+	     Editor editor = prefs.edit();
+		 if(currentTab.equals(EXPENSE_TAG)) {
+   		  
+   		  if(sortBy.equals("Date")) 			  
+   			  editor.putString("exp_cur_orderBy","date(e_date)");
+   		  else 
+   			  editor.putString("exp_cur_orderBy","e_amount * e_convrate");
+   		  
+   		  
+   		  if(order.equals("Newest")||order.equals("Highest"))
+   			  editor.putString("exp_cur_sortOrder","DESC"); 
+   		  else 
+   			  editor.putString("exp_cur_sortOrder","ASC");
+   		      
+   		 
+   		  editor.commit();
+   		  ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag("expense");
+				exp.restartLoader();
+  
+   	  } else {
+   		  
+
+   		  if(sortBy.equals("Date")) 			  
+   			  editor.putString("inc_cur_orderBy","date(i_date)");
+   		  else 
+   			  editor.putString("inc_cur_orderBy","i_amount * i_convrate");
+   		  
+   		  
+   		  if(order.equals("Newest")||order.equals("Highest"))
+   			  editor.putString("inc_cur_sortOrder","DESC"); 
+   		  else 
+   			  editor.putString("inc_cur_sortOrder","ASC");
+   		  
+   		  IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag("income");
+				inc.restartLoader();
+   		      
+   		  editor.commit();
+   		  
+   	  }
+   	  
+		
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 }

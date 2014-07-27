@@ -22,5 +22,12 @@
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
+    
+    <string-array  name="sort_spinner_items">
+        <item>Date - Newest First</item>
+        <item>Date - Oldest First</item>
+        <item>Amount - Highest First</item>
+        <item>Amount - Lowest First</item>
+    </string-array>
 
 </resources>
