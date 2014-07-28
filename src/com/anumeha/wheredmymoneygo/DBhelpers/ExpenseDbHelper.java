@@ -111,7 +111,7 @@ public class ExpenseDbHelper {
     	 if(temp.length() > 0) {
     	 
 	    	 selection = temp.toString();	    	 
-	    	 selectionArgs = (String[]) temp1.toArray();    	 
+	    	 selectionArgs = (String[]) temp1.toArray(new String[temp1.size()]);    	 
     	 } 
     	 
     	 if(temp2.length() > 0){

@@ -178,9 +178,9 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 		 					@Override
 		 					public void OnFaiure(int errCode) {
 		 						endActivity("edited");
-		 					}  },new Expense(expId,e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1),true); 
+		 					}  },new Expense(expId,e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1_edit),true); 
 					} else {
-						dbh.updateExpense(new Expense(e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1),expId);
+						dbh.updateExpense(new Expense(e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1_edit),expId);
 						endActivity("edited");
 					}
             		

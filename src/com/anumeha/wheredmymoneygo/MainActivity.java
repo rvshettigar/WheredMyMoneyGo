@@ -1,8 +1,14 @@
 package com.anumeha.wheredmymoneygo;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.anumeha.wheredmymoneygo.Category.CategoryCursorLoader;
+import com.anumeha.wheredmymoneygo.Currency.CurrencyCursorLoader;
 import com.anumeha.wheredmymoneygo.Expense.ExpenseListFragment;
 import com.anumeha.wheredmymoneygo.Expense.ExpensePieFragment;
 import com.anumeha.wheredmymoneygo.Income.IncomeListFragment;
+import com.anumeha.wheredmymoneygo.Source.SourceCursorLoader;
 import com.example.wheredmymoneygo.R;
 
 import android.app.ActionBar;
@@ -10,9 +16,12 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.Fragment;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -27,11 +36,11 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 
-public class MainActivity extends FragmentActivity implements OnClickListener, OnItemSelectedListener{
+public class MainActivity extends FragmentActivity implements OnClickListener, OnItemSelectedListener, LoaderCallbacks<Cursor>{
 
 
 	private static String currentTab ;
-	private static Spinner sortOrder;
+	private static Spinner sortOrder,filters;
 	private int INCOME_ADDED = 00;
 	private int EXPENSE_ADDED = 10;
 	private static int EDIT_INCOME = 01; //0 FOR INCOME 1 FOR EDIT	
@@ -46,6 +55,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		setContentView(R.layout.activity_main);
 
 		setDefaults();
+		filters = (Spinner)findViewById(R.id.filter);
+		filters.setOnItemSelectedListener(this);
 		
 		convert = (Button)findViewById(R.id.convertCur);
 		convert.setOnClickListener(this);
@@ -73,7 +84,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		actionBar.addTab(actionBar.newTab().setText(R.string.title_expensetab).setTabListener(expenseTab));
 		actionBar.addTab(actionBar.newTab().setText(R.string.title_incometab).setTabListener(incomeTab));
 	//	actionBar.addTab(actionBar.newTab().setText(R.string.title_expvsinctab).setTabListener(new TwoFragTabListener(this, "tag5", "evi", ExpenseOptionsFragment.class, ExpenseListFragment.class )));
-		}
+		
+		getLoaderManager().initLoader(1,null, this ); // 1 for category
+		getLoaderManager().initLoader(2,null, this ); // 2 for sources
+	}
 	
 	@Override
 	  public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -367,57 +381,110 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View v, int pos,
 			long arg3) {
-		String item = (String)parent.getSelectedItem();
-		String sortBy = item.split(" ")[0].trim();
-		String order = item.split(" ")[2].trim();
 		SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-	     Editor editor = prefs.edit();
-		 if(currentTab.equals(EXPENSE_TAG)) {
-   		  
-   		  if(sortBy.equals("Date")) 			  
-   			  editor.putString("exp_cur_orderBy","date(e_date)");
-   		  else 
-   			  editor.putString("exp_cur_orderBy","e_amount * e_convrate");
-   		  
-   		  
-   		  if(order.equals("Newest")||order.equals("Highest"))
-   			  editor.putString("exp_cur_sortOrder","DESC"); 
-   		  else 
-   			  editor.putString("exp_cur_sortOrder","ASC");
-   		      
-   		 
-   		  editor.commit();
-   		  ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag("expense");
-				exp.restartLoader();
-  
-   	  } else {
-   		  
-
-   		  if(sortBy.equals("Date")) 			  
-   			  editor.putString("inc_cur_orderBy","date(i_date)");
-   		  else 
-   			  editor.putString("inc_cur_orderBy","i_amount * i_convrate");
-   		  
-   		  
-   		  if(order.equals("Newest")||order.equals("Highest"))
-   			  editor.putString("inc_cur_sortOrder","DESC"); 
-   		  else 
-   			  editor.putString("inc_cur_sortOrder","ASC");
-   		  
-   		  IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag("income");
-				inc.restartLoader();
-   		      
-   		  editor.commit();
-   		  
-   	  }
-   	  
-		
+	    Editor editor = prefs.edit();
+	    
+	    if(v.getId() == R.id.sortOrder) {
+			String item = (String)parent.getSelectedItem();
+			String sortBy = item.split(" ")[0].trim();
+			String order = item.split(" ")[2].trim();
+			
+			 if(currentTab.equals(EXPENSE_TAG)) {   		  
+	   		  if(sortBy.equals("Date")) 			  
+	   			  editor.putString("exp_cur_orderBy","date(e_date)");
+	   		  else 
+	   			  editor.putString("exp_cur_orderBy","e_amount * e_convrate");
+	   		  if(order.equals("Newest")||order.equals("Highest"))
+	   			  editor.putString("exp_cur_sortOrder","DESC"); 
+	   		  else 
+	   			  editor.putString("exp_cur_sortOrder","ASC");
+	   		   
+	   		  editor.commit();
+	   		  ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag("expense");
+			  exp.restartLoader();
+	  
+	   	  } else {
+	   		  
+	   		  if(sortBy.equals("Date")) 			  
+	   			  editor.putString("inc_cur_orderBy","date(i_date)");
+	   		  else 
+	   			  editor.putString("inc_cur_orderBy","i_amount * i_convrate");
+	  
+	   		  if(order.equals("Newest")||order.equals("Highest"))
+	   			  editor.putString("inc_cur_sortOrder","DESC"); 
+	   		  else 
+	   			  editor.putString("inc_cur_sortOrder","ASC");
+	   		  
+	   		  editor.commit();
+	   		  IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag("income");
+					inc.restartLoader();
+	   		      
+	   		  
+	   	  }
+	   	  
+	  } else {
+		  if(currentTab.equals(EXPENSE_TAG)) {
+			  if(((String)parent.getSelectedItem()).equals("All")) {
+				  editor.putString("exp_filter","");
+			  }
+			  else {
+				  editor.putString("exp_filter",(String)parent.getSelectedItem());
+			  }
+			  
+	   		  ExpenseListFragment exp = (ExpenseListFragment)  getFragmentManager().findFragmentByTag("expense");
+			  exp.restartLoader();
+			  editor.commit();
+		  } else {
+			  if(((String)parent.getSelectedItem()).equals("All")) {
+				  editor.putString("inc_filter","");
+			  }
+			  else
+			  editor.putString("inc_filter",(String)parent.getSelectedItem());
+			  editor.commit();
+	   		  IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag("income");
+			  inc.restartLoader();
+		  }
+	  }
 		
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
+		
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		if(currentTab.equals(EXPENSE_TAG)) {
+			return new CategoryCursorLoader(this);
+		} else {
+			return new SourceCursorLoader(this);
+		}
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor c) {
+		loadSpinners(c);	
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void loadSpinners(Cursor c){	
+		List<String> names = new ArrayList<String>();
+		names.add("All");
+		if(c.moveToFirst()) { 
+			do{
+				names.add(c.getString(1));
+			}while(c.moveToNext()); 
+		}
+		//Toast.makeText(getApplicationContext(), Integer.toString(test.length), Toast.LENGTH_SHORT).show();	
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, names);
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // layout style -> list view with radio button   
+        filters.setAdapter(dataAdapter);  // attaching data adapter to category spinner
+        
 	}
 }
