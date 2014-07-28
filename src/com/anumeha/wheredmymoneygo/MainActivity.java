@@ -384,7 +384,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 	    Editor editor = prefs.edit();
 	    
-	    if(v.getId() == R.id.sortOrder) {
+	    if(((Spinner)parent).getId() == R.id.sortOrder) {
 			String item = (String)parent.getSelectedItem();
 			String sortBy = item.split(" ")[0].trim();
 			String order = item.split(" ")[2].trim();
