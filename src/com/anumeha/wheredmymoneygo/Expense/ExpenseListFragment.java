@@ -76,12 +76,13 @@ public class ExpenseListFragment extends Fragment implements LoaderCallbacks<Cur
 		if(cursor.getCount()==0)
 		{
 			t.setText("No expenses added yet!");
+			listview.setVisibility(View.GONE); //invisible
 			
 		}
 		else
 		{
 			t.setText("");
-		
+			listview.setVisibility(View.VISIBLE); //visible
 		    // expAdapter is a CursorAdapter 
 		    expAdapter = new ExpenseCursorAdapter(activity, R.layout.expense_row, cursor, 0);
 		    listview.setAdapter(expAdapter);
