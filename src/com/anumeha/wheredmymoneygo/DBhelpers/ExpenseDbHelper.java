@@ -36,7 +36,7 @@ public class ExpenseDbHelper {
 	public ExpenseDbHelper(Context context){
 		
 		dbh = new DBHandler(context);
-		prefs = PreferenceManager.getDefaultSharedPreferences(context);	
+		prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());	
 	}
 	
 	// Adding new expense
@@ -82,13 +82,13 @@ public class ExpenseDbHelper {
     	 }
     	 
     	 // add selection args if "inrange" is selected
-    	 if(prefs.getString("exp_cur_viewBy","").equals("inRange")){
+    	 if(prefs.getString("exp_viewBy","").equals("inRange")){
         	 
     		temp.append("date(");
     		temp.append(KEY_E_DATE);
-    		temp.append(") >= ? AND date(");
-    		temp.append(KEY_E_DATE);
-    		temp.append(") <= ?");
+    		temp.append(") BETWEEN ? AND ?");
+    	//	temp.append(KEY_E_DATE);
+    	//	temp.append(") <= ?");
     		
     		temp1.add(prefs.getString("exp_startDate",""));
     		temp1.add(prefs.getString("exp_endDate",""));

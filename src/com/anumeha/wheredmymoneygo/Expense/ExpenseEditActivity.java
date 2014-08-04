@@ -77,7 +77,7 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 			conv = new CurrencyConverter(this);
 			
 			expId = getIntent().getIntExtra("id",0);
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			dateFormat = prefs.getString("def_dateformat", "MM-dd-yyyy");
 			getLoaderManager().initLoader(1,null, this ); //load categories
 			getLoaderManager().initLoader(0,null, this ); //get expense with that id.

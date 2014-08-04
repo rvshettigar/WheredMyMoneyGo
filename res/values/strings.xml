@@ -17,6 +17,7 @@
     <string name="expEditAct_name">Edit Expense</string>
      <string name="incAddAct_name">Add Income</string>
     <string name="incEditAct_name">Edit Income</string>
+    <string name="optionsAct_name">Select Options:</string>
     
     <string-array  name="listview_menu">
         <item>Edit</item>

@@ -33,7 +33,7 @@ public class IncomeDbHelper {
 	public IncomeDbHelper(Context context){
 		
 		dbh = new DBHandler(context);
-		prefs = PreferenceManager.getDefaultSharedPreferences(context);	
+		prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());	
 	}
 	
 	// Adding new income
@@ -75,7 +75,7 @@ public class IncomeDbHelper {
     	 }
     	 
     	 // add selection args if "inrange" is selected
-    	 if(prefs.getString("inc_cur_viewBy","").equals("inRange")){
+    	 if(prefs.getString("inc_viewBy","").equals("inRange")){
         	 
     		temp.append("date(");
     		temp.append(KEY_I_DATE);

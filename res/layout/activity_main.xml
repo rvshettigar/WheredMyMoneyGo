@@ -4,52 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity" >
-
-    <LinearLayout
-    android:id="@+id/SortByLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal" >
-     <TextView
-           android:id="@+id/sortLabel"
-           android:layout_width="146dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="3.34"
-           android:text="Sort: "
-           android:textAppearance="?android:attr/textAppearanceMedium" />
-     
-      <Spinner
-             android:id="@+id/sortOrder"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content" />
-      
-      </LinearLayout>
-    
-     <LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" >
-     <TextView
-           android:id="@+id/filterLabel"
-           android:layout_width="146dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="3.34"
-           android:text="Filter:"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
-     
-      <Spinner
-             android:id="@+id/filter"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content" />
-      
-      </LinearLayout>
-      
-    
-     <Button
-        android:id="@+id/convertCur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="convert to defaulty"/>
      
      <Button
         android:id="@+id/listPie"
@@ -57,10 +11,13 @@
         android:layout_height="wrap_content"
         android:text="Pie"/>
      
-    <FrameLayout
-        android:id="@+id/fragment_e_options1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+     <Button
+        android:id="@+id/filterOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filter Options"
+        android:onClick="showOptionsDialog" />
+     
     <FrameLayout
         android:id="@+id/fragment_cashflow"
         android:layout_width="fill_parent"

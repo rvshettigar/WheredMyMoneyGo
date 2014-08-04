@@ -41,7 +41,7 @@ public class CurrencyConverter {
 	private SharedPreferences prefs;
 	private Context context;
 	public CurrencyConverter(Context context) {
-		this.prefs = PreferenceManager.getDefaultSharedPreferences(context);	
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());	
 		this.context = context;
 	}
 	

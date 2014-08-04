@@ -82,7 +82,7 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 			conv = new CurrencyConverter(this);
 			
 			incId = getIntent().getIntExtra("id",0);
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			dateFormat = prefs.getString("def_dateformat", "MM-dd-yyyy");
 			getLoaderManager().initLoader(1,null, this ); //load sources
 			getLoaderManager().initLoader(3,null, this ); //get income with that id.

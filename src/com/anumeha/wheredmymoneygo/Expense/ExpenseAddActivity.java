@@ -199,7 +199,8 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
 	        e_date = dateFormat.format(myDate);
 			      
-			expenseDate.setText(e_date);
+	        dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+			expenseDate.setText(dateFormat.format(myDate));
 				}
 			}
 

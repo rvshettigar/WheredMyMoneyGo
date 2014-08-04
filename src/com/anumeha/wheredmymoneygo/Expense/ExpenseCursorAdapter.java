@@ -24,7 +24,7 @@ public class ExpenseCursorAdapter extends ResourceCursorAdapter{
 	
 	public ExpenseCursorAdapter(Context context, int layout, Cursor c, int flags) {
 		super(context, layout, c, flags);
-		prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
 		defaultCurrency = prefs.getString("def_currency", "USD");
 		db = new CurrencyDbHelper(context);
 		conv = new CurrencyConverter(context);
