@@ -28,43 +28,48 @@
         
          <activity
             android:name="com.anumeha.wheredmymoneygo.Category.CategoryActivity"
-            android:label="@string/catAct_name" >
-        </activity>
+            android:label="@string/catAct_name" />
+        
         
           <activity
             android:name="com.anumeha.wheredmymoneygo.Category.CategoryEditActivity"
-            android:label="@string/catEditAct_name" >
-        </activity>
+            android:label="@string/catEditAct_name" />
+        
         
            <activity
             android:name="com.anumeha.wheredmymoneygo.Source.SourceActivity"
-            android:label="@string/souAct_name" >
-        </activity>
+            android:label="@string/souAct_name" />
+      
         
           <activity
             android:name="com.anumeha.wheredmymoneygo.Source.SourceEditActivity"
-            android:label="@string/souEditAct_name" >
-        </activity>
+            android:label="@string/souEditAct_name" />
+ 
         
         <activity
             android:name="com.anumeha.wheredmymoneygo.Expense.ExpenseAddActivity"
-            android:label="@string/expAddAct_name" >
-        </activity>
+            android:label="@string/expAddAct_name" />
+   
         
          <activity
             android:name="com.anumeha.wheredmymoneygo.Expense.ExpenseEditActivity"
-            android:label="@string/expEditAct_name" >
-        </activity>
+            android:label="@string/expEditAct_name" />
+      
         
           <activity
             android:name="com.anumeha.wheredmymoneygo.Income.IncomeAddActivity"
-            android:label="@string/incAddAct_name" >
-        </activity>
+            android:label="@string/incAddAct_name" />
+     
         
          <activity
             android:name="com.anumeha.wheredmymoneygo.Income.IncomeEditActivity"
-            android:label="@string/incEditAct_name" >
-        </activity>
+            android:label="@string/incEditAct_name" />
+       
+        
+         <activity 
+              android:name="com.anumeha.wheredmymoneygo.OptionsDialog"
+           	  android:label="@string/optionsAct_name" 
+              android:theme="@android:style/Theme.Holo.Dialog" />
         
          
     </application>
