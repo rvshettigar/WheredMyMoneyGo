@@ -1,5 +1,6 @@
 package com.anumeha.wheredmymoneygo;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +33,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
@@ -44,7 +46,11 @@ public class OptionsDialog extends Activity implements OnClickListener, LoaderCa
 	private static boolean dateRange, startDateClicked = true;
 	private RadioGroup viewBy;
 	private LinearLayout dateRangeLayout;
-	private static String startDateVal, endDateVal;
+	private static String startDateVal = null, endDateVal = null;
+	String defFilterVal,defSortOrderVal,defOrderByVal, defViewByVal;
+	static String defStartDateVal = null;
+	static String defEndDateVal = null;
+	String defConvVal;
 	String filterVal, sortOrderVal, orderByVal,  viewByVal, convVal;
 	String filterKey, sortOrderKey, orderByKey,  viewByKey, startDateKey, endDateKey,convKey;
 	DefaultPreferenceAccess prefAccess; 
@@ -93,6 +99,21 @@ public class OptionsDialog extends Activity implements OnClickListener, LoaderCa
 				
 				OptionsDialog.this.setContentView(R.layout.options_dialog);
 				filters = (Spinner)findViewById(R.id.filter);
+				defFilterVal = data.get(0);
+				defSortOrderVal = data.get(1);
+				defOrderByVal = data.get(2);
+				defViewByVal = data.get(3);
+				defStartDateVal = data.get(4);
+				defEndDateVal = data.get(5);
+				defConvVal = data.get(6);
+				
+				
+				sortOrder = (Spinner)findViewById(R.id.sortOrder);
+				ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(OptionsDialog.this,
+				        R.array.sort_spinner_items, android.R.layout.simple_spinner_item);
+				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				sortOrder.setAdapter(adapter);
+				sortOrder.setSelection(getDefaultSortSelection(defSortOrderVal,defOrderByVal));
 				
 				dateRangeLayout = (LinearLayout)findViewById(R.id.dateRangeLayout);
 				viewBy = (RadioGroup) findViewById(R.id.radioViewin);
@@ -112,14 +133,17 @@ public class OptionsDialog extends Activity implements OnClickListener, LoaderCa
 					
 				});
 					
+				if(defViewByVal.equals("all")) {
+					RadioButton rdb = ((RadioButton) findViewById(R.id.radioAll));
+					rdb.setChecked(true);
+				} else {
+					((RadioButton) findViewById(R.id.radioRange)).setChecked(true);
+					
+				}
 				convert = (CheckBox)findViewById(R.id.convertCur);
-				
-				sortOrder = (Spinner)findViewById(R.id.sortOrder);
-				ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(OptionsDialog.this,
-				        R.array.sort_spinner_items, android.R.layout.simple_spinner_item);
-				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-				sortOrder.setAdapter(adapter);
-				
+				if(defConvVal.equals("on")) {
+					convert.setChecked(true);
+				}
 				OptionsDialog.this.getLoaderManager().initLoader(1,null, OptionsDialog.this ); // 1 for category
 				OptionsDialog.this.getLoaderManager().initLoader(2,null, OptionsDialog.this ); // 2 for sources
 			}
@@ -133,6 +157,24 @@ public class OptionsDialog extends Activity implements OnClickListener, LoaderCa
 		
 	}
 	
+	protected int getDefaultSortSelection(String sortOrder,
+			String orderBy) {
+		int position = 0;
+		if(orderBy.equals("date(e_date)")){
+			if(sortOrder.equals("ASC")) {
+				position = 1;
+			}
+		} else {
+			if(sortOrder.equals("ASC")) {
+				position = 3;
+			} else {
+				position = 2;
+			}
+		}
+			
+			return position;
+	}
+
 	@Override
 	public void onClick(View v) {	 
 	      Button b = (Button)v;
@@ -264,75 +306,7 @@ public class OptionsDialog extends Activity implements OnClickListener, LoaderCa
 	   	  }, keys, values, this);
 		
 	}
-	/*
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View v, int pos,
-			long arg3) {
-		SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-	    Editor editor = prefs.edit();
-	    
-	    if(((Spinner)parent).getId() == R.id.sortOrder) {
-			String item = (String)parent.getSelectedItem();
-			String sortBy = item.split(" ")[0].trim();
-			String order = item.split(" ")[2].trim();
-			
-			 if(currentTab.equals(MainActivity.EXPENSE_TAG)) {   		  
-	   		  if(sortBy.equals("Date")) 			  
-	   			  editor.putString("exp_cur_orderBy","date(e_date)");
-	   		  else 
-	   			  editor.putString("exp_cur_orderBy","e_amount * e_convrate");
-	   		  if(order.equals("Newest")||order.equals("Highest"))
-	   			  editor.putString("exp_cur_sortOrder","DESC"); 
-	   		  else 
-	   			  editor.putString("exp_cur_sortOrder","ASC");
-	   		   
-	   		  editor.commit();
-	  
-	   	  } else {
-	   		  
-	   		  if(sortBy.equals("Date")) 			  
-	   			  editor.putString("inc_cur_orderBy","date(i_date)");
-	   		  else 
-	   			  editor.putString("inc_cur_orderBy","i_amount * i_convrate");
-	  
-	   		  if(order.equals("Newest")||order.equals("Highest"))
-	   			  editor.putString("inc_cur_sortOrder","DESC"); 
-	   		  else 
-	   			  editor.putString("inc_cur_sortOrder","ASC");
-	   		  
-	   		  editor.commit();
-	   		  
-	   	  }
-	   	  
-	  } else {
-		  if(currentTab.equals(MainActivity.EXPENSE_TAG)) {
-			  if(((String)parent.getSelectedItem()).equals("All")) {
-				  editor.putString("exp_filter","");
-			  }
-			  else {
-				  editor.putString("exp_filter",(String)parent.getSelectedItem());
-			  }
-			  
-	   		
-			  editor.commit();
-		  } else {
-			  if(((String)parent.getSelectedItem()).equals("All")) {
-				  editor.putString("inc_filter","");
-			  }
-			  else
-			  editor.putString("inc_filter",(String)parent.getSelectedItem());
-			  editor.commit();
-	   		 
-		  }
-	  }
-		
-	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		
-	}
-*/
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		if(currentTab.equals(MainActivity.EXPENSE_TAG)) {
@@ -355,6 +329,7 @@ public class OptionsDialog extends Activity implements OnClickListener, LoaderCa
 	
 	private void loadSpinners(Cursor c){	
 		List<String> names = new ArrayList<String>();
+		int pos = 0;
 		names.add("All");
 		if(c.moveToFirst()) { 
 			do{
@@ -364,7 +339,10 @@ public class OptionsDialog extends Activity implements OnClickListener, LoaderCa
 		//Toast.makeText(getApplicationContext(), Integer.toString(test.length), Toast.LENGTH_SHORT).show();	
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, names);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // layout style -> list view with radio button   
+		if(defFilterVal != null) 
+			pos = dataAdapter.getPosition(defFilterVal);
         filters.setAdapter(dataAdapter);  // attaching data adapter to category spinner
+        filters.setSelection(pos);
         
 	}
 
@@ -374,10 +352,35 @@ public class OptionsDialog extends Activity implements OnClickListener, LoaderCa
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 		//change it to date from the defaults
+			int year = 0, month = 0, day = 0;
+			String dateVal, defDateVal;
 			final Calendar c = Calendar.getInstance();
-			int year = c.get(Calendar.YEAR);
-			int month = c.get(Calendar.MONTH);
-			int day = c.get(Calendar.DAY_OF_MONTH);
+			if(startDateClicked) {
+				dateVal = startDateVal;
+				defDateVal = defStartDateVal;
+			}else {
+				dateVal = endDateVal;
+				defDateVal = defEndDateVal;
+			}
+				if(dateVal != null || defDateVal != null){
+					String date;
+					if(dateVal != null) {
+						date = dateVal;
+					} else {
+						date = defDateVal;
+					}
+						try {
+							Date myDate = (new SimpleDateFormat("yyyy-MM-dd")).parse(date);
+							c.setTime(myDate);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					
+				} 				
+				 year = c.get(Calendar.YEAR);
+				 month = c.get(Calendar.MONTH);
+				 day = c.get(Calendar.DAY_OF_MONTH); 
+			 
 			return new DatePickerDialog(getActivity(), this, year, month, day);
 		}
 		
