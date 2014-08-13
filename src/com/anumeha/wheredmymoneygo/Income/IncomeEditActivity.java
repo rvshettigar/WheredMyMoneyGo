@@ -253,7 +253,7 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 	    else if (id == 5) 
 	    	return new CurrencyCursorLoader(this);
 	    else
-			return new IncomeCursorLoader(this,incId);	
+			return new IncomeCursorLoader(this,incId,2);	
 	}
 
 	@Override

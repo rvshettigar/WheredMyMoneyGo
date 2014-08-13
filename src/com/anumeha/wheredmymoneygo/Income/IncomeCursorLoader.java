@@ -11,29 +11,35 @@ public class IncomeCursorLoader extends CursorLoader {
 
 	IncomeDbHelper db; 
 	int incId = -1;
-	public IncomeCursorLoader(Context context) {
-		super(context);
-		
+	int type =0;
+	String s_name;
+	public IncomeCursorLoader(Context context,int type) {
+		super(context);		
 		db = new IncomeDbHelper(context);
+		this.type = type;
 		
 	}
 	
-	public IncomeCursorLoader(Context context, int incId) {
+	public IncomeCursorLoader(Context context, int incId, int type) {
 		super(context);
 		this.incId= incId;
+		this.type = type;
 		db = new IncomeDbHelper(context);	
 	}
 
 	@ Override
 	public Cursor loadInBackground() {
 
-		if(incId == -1){
-		return db.getAllIncome();
+		switch(type) {
+		case 1 : 
+			return db.getAllIncome();
+		case 2:
+			return db.getIncomeById(incId);
+		case 3: 
+			return db.getCategoriesAndIncome();
+		default :
+			return db.getAllIncome();
 		}
-		
-		Cursor c = db.getIncomeById(incId); // if income id is being retrieved
-		incId=-1;
-		return c;
 		
 	}
 }

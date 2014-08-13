@@ -66,7 +66,7 @@ public class IncomeListFragment extends Fragment implements LoaderCallbacks<Curs
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-	    return new IncomeCursorLoader(activity);
+	    return new IncomeCursorLoader(activity,1);
 	}
 	 
 	@Override

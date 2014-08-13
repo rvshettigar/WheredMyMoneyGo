@@ -15,6 +15,7 @@ public class SourceDbHelper {
  
     private static final String KEY_S_ID = "_id";
     private static final String KEY_S_NAME = "s_name";
+    public static final String KEY_S_COLOR = "s_color";
     
     
     private DBHandler dbh;
@@ -28,10 +29,13 @@ public class SourceDbHelper {
 	 public void addSource(Source source) {
 		 
 		 SQLiteDatabase   db = dbh.getWritableDatabase();
+		 ColorDbHelper colorDb = new ColorDbHelper(db);
+		 int color = colorDb.getFirstAvailableColor();
 		 
 		 ContentValues values = new ContentValues();
-		 values.put(KEY_S_NAME, source.getName()); // Source Name
-				 
+		 values.put(KEY_S_NAME, source.getName()); // Source Name	
+		 values.put(KEY_S_COLOR, color ); //color for source
+		 colorDb.updateColor(color, "true");
 		 // Inserting Row
 		 db.insert(TABLE_SOURCE, null, values);
 		 db.close(); // Closing database connection

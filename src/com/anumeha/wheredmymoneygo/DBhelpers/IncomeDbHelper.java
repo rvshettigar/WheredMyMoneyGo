@@ -157,4 +157,26 @@ public class IncomeDbHelper {
      	    db.close(); // Closing database connection
      
        }
+       
+       public Cursor getCategoriesAndIncome() {
+   		
+    	   StringBuilder selection = new StringBuilder();
+   			ArrayList<String> temp = new ArrayList<String>();
+   		// add selection args if "inrange" is selected
+   	   	 if(prefs.getString("inc_viewBy","").equals("inRange")){
+   	       	 
+   	   		selection.append("date(");
+   	   		selection.append(KEY_I_DATE);
+   	   		selection.append(") BETWEEN ? AND ?");
+   	
+   	   		temp.add(prefs.getString("inc_startDate",""));
+   	   		temp.add(prefs.getString("inc_endDate",""));
+   	 
+   	   	 }
+  		 SQLiteDatabase db = dbh.getWritableDatabase();   	
+  		 String [] columns = {DBHandler.TABLE_SOURCE+"."+DBHandler.KEY_S_ID,KEY_I_SOURCE,"SUM("+KEY_I_AMOUNT+" * "+KEY_I_CONVRATE+")",DBHandler.KEY_S_COLOR};
+  		 String table = TABLE_INCOME + " JOIN "+ DBHandler.TABLE_SOURCE +" ON "+ KEY_I_SOURCE +" = "+ DBHandler.KEY_S_NAME;
+  	   	 Cursor c = db.query(table, columns ,selection.toString(),temp.toArray(new String[temp.size()]),KEY_I_SOURCE,null,null);	    	
+  	    	return c;
+  	}
 }

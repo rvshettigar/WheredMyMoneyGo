@@ -57,10 +57,11 @@ public class DBHandler extends SQLiteOpenHelper{
     public static final String KEY_C_COLOR = "c_color";
         
     /** Sources Table **/
-    private static final String TABLE_SOURCE	 = "Source";
+    public static final String TABLE_SOURCE	 = "Source";
  
-    private static final String KEY_S_ID = "_id";
-    private static final String KEY_S_NAME = "s_name";
+    public static final String KEY_S_ID = "_id";
+    public static final String KEY_S_NAME = "s_name";
+    public static final String KEY_S_COLOR = "s_color";
     
     /** Recurrences Table**/
     private static final String TABLE_RECURRENCE = "Recurrences";
@@ -141,7 +142,9 @@ public class DBHandler extends SQLiteOpenHelper{
 	      //Sources Table     
 	        String CREATE_SOURCE_TABLE = "CREATE TABLE " + TABLE_SOURCE + "("
 	                + KEY_S_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," 
-	        		+ KEY_S_NAME + " TEXT" + ")";
+	        		+ KEY_S_NAME + " TEXT,"
+	        		+ KEY_S_COLOR + " REAL"
+	                + ")";
 	        db.execSQL(CREATE_SOURCE_TABLE);
 	        
 	      //Recurrence Table    
@@ -302,9 +305,13 @@ public class DBHandler extends SQLiteOpenHelper{
 	    
 	    public void addSource(Source source, SQLiteDatabase db) {
 	    	
+	    	ColorDbHelper colorDb = new ColorDbHelper(db);
+	    	 int color = colorDb.getFirstAvailableColor();
+	    	
 	    	ContentValues values = new ContentValues();
 			 values.put(KEY_S_NAME, source.getName()); //Source Name
-			 
+			 values.put(KEY_S_COLOR, color ); //color for category
+			 colorDb.updateColor(color, "true");
 			 // Inserting Row
 			 db.insert(TABLE_SOURCE, null, values);
 			

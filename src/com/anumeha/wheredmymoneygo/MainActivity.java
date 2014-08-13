@@ -27,7 +27,7 @@ import android.widget.Button;
 public class MainActivity extends FragmentActivity implements OnClickListener{
 
 
-	private static String currentTab ;
+	static String currentTab ;
 	private int INCOME_ADDED = 00;
 	private int EXPENSE_ADDED = 10;
 	private int OPTIONS = 99;
@@ -293,7 +293,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 					editor.putString("exp_cur_viewAs", "pie");
 					b.setText("List");	
 					editor.commit();
-					f = Fragment.instantiate(MainActivity.this, ExpensePieFragment.class.getName());
+					f = Fragment.instantiate(MainActivity.this, PieFragment.class.getName());
 					ft = fm.beginTransaction();
 					ft.replace(R.id.fragment_cashflow, f, "expense_pie");
 					expenseTab.setCurrentFrag(f);
@@ -311,17 +311,26 @@ public class MainActivity extends FragmentActivity implements OnClickListener{
 				}
 				
 			} else {
-				if(prefs.getString("inc_conv", "off").equals("off")) {
-					editor.putString("inc_conv", "on");
-					b.setText("convert to Original");
+				if(prefs.getString("inc_cur_viewAs", "list").equals("list")) {
+					editor.putString("inc_cur_viewAs", "pie");
+					b.setText("List");	
+					editor.commit();
+					f = Fragment.instantiate(MainActivity.this, PieFragment.class.getName());
+					ft = fm.beginTransaction();
+					ft.replace(R.id.fragment_cashflow, f, "income_pie");
+					incomeTab.setCurrentFrag(f);
+					ft.commit();
 				}
 				else {
-					editor.putString("inc_conv", "off");
-					b.setText("convert to Default");					
+					editor.putString("inc_cur_viewAs", "list");
+					b.setText("Pie");	
+					editor.commit();
+					f = Fragment.instantiate(MainActivity.this, IncomeListFragment.class.getName());
+					ft = fm.beginTransaction();
+					ft.replace(R.id.fragment_cashflow, f, "income");
+					incomeTab.setCurrentFrag(f);
+					ft.commit();
 				}
-				editor.commit();
-					IncomeListFragment inc = (IncomeListFragment)  getFragmentManager().findFragmentByTag("income");
-					inc.restartLoader();
 			}
 			
 			

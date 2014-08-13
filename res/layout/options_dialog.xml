@@ -55,7 +55,7 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="horizontal" >
 		     <TextView
-		           android:id="@+id/filterLabel"
+		           android:id="@+id/filterDateLabel"
 		           android:layout_width="146dp"
 		           android:layout_height="wrap_content"
 		           android:layout_weight="3.34"

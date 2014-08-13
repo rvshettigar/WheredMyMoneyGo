@@ -82,6 +82,7 @@ public class CategoryDbHelper {
 	      SQLiteDatabase db = dbh.getWritableDatabase();
 	 
 	  	    // Deleting Row
+	      //Add part to free color
 	  	    db.delete(TABLE_CATEGORY, KEY_C_NAME + "=\"" + name +"\"", null);
 	  	    db.close(); // Closing database connection
 	  
