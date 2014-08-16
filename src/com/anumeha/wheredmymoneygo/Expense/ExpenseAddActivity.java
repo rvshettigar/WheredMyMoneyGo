@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,7 +44,7 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 	ExpenseDbHelper dbh;
 	CategoryCursorLoader loader;
 	boolean valid = true;
-	CurrencyConverter conv;
+	CurrencyConverter convFrag;
 	
 	final static int DATE_DIALOG_ID = 999;
 	 @Override
@@ -62,7 +63,15 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 			cancel = (Button)findViewById(R.id.expAddCancel);
 			cancel.setOnClickListener(this);
 			dbh = new ExpenseDbHelper(this);
-			conv = new CurrencyConverter(this);
+			FragmentManager fragmentManager = getFragmentManager();
+			convFrag = (CurrencyConverter) fragmentManager                
+			                      .findFragmentByTag(CurrencyConverter.TAG);
+			
+			if (convFrag == null) {
+	            convFrag = new CurrencyConverter();
+	            fragmentManager.beginTransaction().add(convFrag,
+	                    CurrencyConverter.TAG).commit();
+	        }
 			
 			getLoaderManager().initLoader(1,null, this ); // 1 for category
 			getLoaderManager().initLoader(5,null, this ); //5 for currency
@@ -128,7 +137,7 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 				}
 				
 				if(valid) {	
-					conv.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
 	 					@Override
 	 					public void OnSuccess(Float rate) {
 	 						endActivity("added");

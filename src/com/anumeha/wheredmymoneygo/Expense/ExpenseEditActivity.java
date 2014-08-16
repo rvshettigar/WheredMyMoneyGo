@@ -18,6 +18,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,7 +58,7 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 	boolean valid = true, noChanges =true;
 	int expId;
 	
-	CurrencyConverter conv;
+	CurrencyConverter convFrag;
 	final static int DATE_DIALOG_ID = 999;
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,15 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 			cancel = (Button)findViewById(R.id.expCancelEdit);
 			cancel.setOnClickListener(this);
 			dbh = new ExpenseDbHelper(this);
-			conv = new CurrencyConverter(this);
+			FragmentManager fragmentManager = getFragmentManager();
+			convFrag = (CurrencyConverter) fragmentManager                
+			                      .findFragmentByTag(CurrencyConverter.TAG);
+			
+			if (convFrag == null) {
+	            convFrag = new CurrencyConverter();
+	            fragmentManager.beginTransaction().add(convFrag,
+	                    CurrencyConverter.TAG).commit();
+	        }
 			
 			expId = getIntent().getIntExtra("id",0);
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -170,7 +179,7 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 				
 				if(valid && !noChanges) {	
 					if(!e_currency_edit.equals(e_currency)) {
-						conv.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+						convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
 		 					@Override
 		 					public void OnSuccess(Float rate) {
 		 						endActivity("edited");

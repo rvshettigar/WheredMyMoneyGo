@@ -18,7 +18,6 @@ import android.widget.TextView;
 public class ExpenseCursorAdapter extends ResourceCursorAdapter{
 
 	SharedPreferences prefs;
-	CurrencyConverter conv; 
 	CurrencyDbHelper db;
 	String defaultCurrency;
 	
@@ -27,7 +26,6 @@ public class ExpenseCursorAdapter extends ResourceCursorAdapter{
 		prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
 		defaultCurrency = prefs.getString("def_currency", "USD");
 		db = new CurrencyDbHelper(context);
-		conv = new CurrencyConverter(context);
 	}
 
 	@Override

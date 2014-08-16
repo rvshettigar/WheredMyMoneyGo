@@ -22,6 +22,8 @@ import com.anumeha.wheredmymoneygo.DBhelpers.IncomeDbHelper;
 import com.anumeha.wheredmymoneygo.Expense.Expense;
 import com.anumeha.wheredmymoneygo.Income.Income;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,20 +31,30 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-public class CurrencyConverter {
+public class CurrencyConverter extends Fragment{
+	
+	public static final String TAG = "currency_converter";
+	private SharedPreferences prefs;
+	private Context context;
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true); // handle orientation changes
+    }
+	
+	@Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());	
+		this.context = activity;    
+    }
 	
 	public static interface ResultListener<T> {
 		void OnSuccess(T data);
 		void OnFaiure(int errCode);
-	}
-
-	private SharedPreferences prefs;
-	private Context context;
-	public CurrencyConverter(Context context) {
-		this.prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());	
-		this.context = context;
 	}
 	
 	public void getConvertedRate(ResultListener<Float> lstnr, Expense e, boolean update) {
@@ -50,7 +62,7 @@ public class CurrencyConverter {
 		String to = prefs.getString("def_currency","USD" );
 		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,context, e, update);
 		task.execute(e.getCurrency(),to); //to is the default currency
-		
+		context = null;
 	}
 	
 	public void getConvertedRate(ResultListener<Float> lstnr, Income i, boolean update) {
@@ -58,7 +70,7 @@ public class CurrencyConverter {
 		String to = prefs.getString("def_currency","USD" );
 		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,context, i,update);
 		task.execute(i.getCurrency(),to); //to is the default currency
-		
+		context = null;
 	}
 
 	static class ConvertCurrencyTask extends AsyncTask<String, Void, Float> {
@@ -83,6 +95,7 @@ public class CurrencyConverter {
 			this.update = update;
 			cm =(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 			pd = new ProgressDialog(context);
+			context = null;
 		}
 		
 		
@@ -95,6 +108,7 @@ public class CurrencyConverter {
 			this.update = update;
 			cm =(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 			pd = new ProgressDialog(context);
+			context = null;
 		}
 		
 		@Override
@@ -143,6 +157,7 @@ public class CurrencyConverter {
 		protected void onPostExecute(Float rate) {
 			
 			if(rate.isNaN() || rate == -1) {
+				if(pd.isShowing())
 				pd.dismiss();
 				lstnr.OnFaiure(0);
 			} else {
