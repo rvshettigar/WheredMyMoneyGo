@@ -145,7 +145,7 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 	 					public void OnFaiure(int errCode) {
 	 						endActivity("added");
 	 					}  },new Income(i_name,i_desc,i_date,i_currency,amount,i_source),false);     
-            		endActivity("added");
+            		
 				}
 				
 				else
