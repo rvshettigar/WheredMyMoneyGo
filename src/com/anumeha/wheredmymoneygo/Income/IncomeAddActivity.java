@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -40,12 +41,13 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 	
 	private Button add, cancel;
 	private static TextView incomeDate;
-	private Spinner source, currency;
+	private Spinner source, currency, frequency;
 	private static String i_date;
 	IncomeDbHelper dbh;
 	CategoryCursorLoader loader;
 	boolean valid = true;
 	CurrencyConverter convFrag;
+	CheckBox ask;
 	
 	final static int DATE_DIALOG_ID = 999;
 	 @Override
@@ -57,7 +59,15 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 	        
 	        source = (Spinner)findViewById(R.id.incSource);
 	        currency = (Spinner)findViewById(R.id.inputIncomeCurrency);
+	        frequency = (Spinner)findViewById(R.id.inputIncomeFreq);
+	        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+			        R.array.frequency_spinner_items, android.R.layout.simple_spinner_item);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			frequency.setAdapter(adapter);
+			frequency.setSelection(0);
 	        
+			ask = (CheckBox)findViewById(R.id.inputIncNotify); 
+
 	        setCurrentDate();
 	        add = (Button)findViewById(R.id.incAddSubmit);
 			add.setOnClickListener(this);
@@ -134,7 +144,8 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 				if(i_desc.trim().equals("")) {
 					i_desc =" ";
 				}
-				
+				String freq = frequency.getSelectedItem().toString(); 
+				boolean notify = ask.isChecked();
 				if(valid) {	
 					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
 	 					@Override
@@ -144,7 +155,7 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 	 					@Override
 	 					public void OnFaiure(int errCode) {
 	 						endActivity("added");
-	 					}  },new Income(i_name,i_desc,i_date,i_currency,amount,i_source),false);     
+	 					}  },new Income(i_name,i_desc,i_date,i_currency,amount,i_source,freq,notify),false);     
             		
 				}
 				

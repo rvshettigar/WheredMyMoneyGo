@@ -30,5 +30,12 @@
         <item>Amount - Highest First</item>
         <item>Amount - Lowest First</item>
     </string-array>
+    
+    <string-array  name="frequency_spinner_items">
+        <item>Do not repeat</item>
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+    </string-array>
 
 </resources>

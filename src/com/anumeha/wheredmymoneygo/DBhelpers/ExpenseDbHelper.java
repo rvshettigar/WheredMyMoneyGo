@@ -25,6 +25,8 @@ public class ExpenseDbHelper {
     private static final String KEY_E_AMOUNT = "e_amount";
     private static final String KEY_E_CATEGORY1 = "e_category1";
     private static final String KEY_E_CONVRATE = "e_convrate";
+    private static final String KEY_E_FREQ = "e_freq"; //frequecy of repetition 
+    private static final String KEY_E_ASK = "e_ask"; //ask the user before adding recurrence
 
 
 	private SQLiteDatabase database;
@@ -52,6 +54,8 @@ public class ExpenseDbHelper {
 	    values.put(KEY_E_AMOUNT, expense.getAmount()); // Expense amount  
 	    values.put(KEY_E_CATEGORY1, expense.getCategory1()); // Expense Category1
 	    values.put(KEY_E_CONVRATE, expense.get_convToDef()); // Expense conversion to default rate
+	    values.put(KEY_E_FREQ, expense.getFreq()); // Expense Frequency
+	    values.put(KEY_E_ASK, expense.getAsk()?"yes":"no"); // Ask before adding recurrence
 	    // Inserting Row
 	    database.insert(TABLE_EXPENSES, null, values);
 	    database.close(); // Closing database connection
@@ -154,6 +158,8 @@ public class ExpenseDbHelper {
 	    values.put(KEY_E_AMOUNT, expense.getAmount()); // Expense amount  
 	    values.put(KEY_E_CATEGORY1, expense.getCategory1()); // Expense Category1
 	    values.put(KEY_E_CONVRATE, expense.get_convToDef()); // Expense conversion to default rate
+	    values.put(KEY_E_FREQ, expense.getFreq()); // Expense Frequency
+	    values.put(KEY_E_ASK, expense.getAsk()?"yes":"no"); // Ask before adding recurrence
   	 
   	    // Updating Row
   	    db.update(TABLE_EXPENSES, values, KEY_E_ID+"="+ id , null);

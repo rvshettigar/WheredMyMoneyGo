@@ -11,7 +11,6 @@ import java.util.Locale;
 import com.anumeha.wheredmymoneygo.Category.CategoryCursorLoader;
 import com.anumeha.wheredmymoneygo.Currency.CurrencyCursorLoader;
 import com.anumeha.wheredmymoneygo.DBhelpers.IncomeDbHelper;
-import com.anumeha.wheredmymoneygo.Expense.Expense;
 import com.anumeha.wheredmymoneygo.Income.Income;
 import com.anumeha.wheredmymoneygo.Income.IncomeCursorLoader;
 import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
@@ -36,6 +35,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -45,14 +45,18 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 	
 	private static Button add, cancel;
 	private static TextView incomeDate;
-	private static Spinner source,currency;
+	private static Spinner source,currency,frequency;
 	private String i_name;
 	private static String i_date, i_date_edit;
 	private String i_desc;
 	private String i_source;
 	private String i_currency;
+	private int i_freq;
+	private boolean i_notify;
     private static float i_amount;	
     private static ArrayAdapter<String> dataAdapter1, dataAdapter2;
+    private ArrayAdapter<CharSequence> freqadapter;
+    private CheckBox ask;
     static String dateFormat;
 	boolean loadFinished1 =false;
 	boolean loadFinished2 =false;
@@ -73,6 +77,15 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
         
 	        source = (Spinner)findViewById(R.id.incSourceEdit);
 	        currency = (Spinner)findViewById(R.id.inputIncomeCurrencyEdit);
+	        
+	        frequency = (Spinner)findViewById(R.id.inputIncomeFreqEdit);
+	        
+	        freqadapter = ArrayAdapter.createFromResource(this,
+			        R.array.frequency_spinner_items, android.R.layout.simple_spinner_item);
+			freqadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			frequency.setAdapter(freqadapter);
+
+	        ask = (CheckBox)findViewById(R.id.inputIncNotifyEdit); 
 	        incomeDate = (TextView)findViewById(R.id.incomeDateEdit);
 
 	        add = (Button)findViewById(R.id.incSaveEdit);
@@ -181,7 +194,11 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 					noChanges = false;
 					
 				}
+				String i_freq_edit = frequency.getSelectedItem().toString();
+				if(frequency.getSelectedItemPosition()!= i_freq) noChanges = false;
 				
+				boolean i_notify_edit = ask.isChecked();
+				if(i_notify_edit != i_notify) noChanges = false;
 				
 				if(valid && !noChanges) {	
 					if(!i_currency_edit.equals(i_currency)) {
@@ -193,9 +210,9 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 	 					@Override
 	 					public void OnFaiure(int errCode) {
 	 						endActivity("edited");
-	 					}  },new Income(incId,i_name_edit,i_desc_edit,i_date_edit,i_currency_edit,amount,i_source),true); 
+	 					}  },new Income(incId,i_name_edit,i_desc_edit,i_date_edit,i_currency_edit,amount,i_source,i_freq_edit,i_notify_edit),true); 
 					} else {
-						dbh.updateIncome(new Income(i_name_edit,i_desc_edit,i_date_edit,i_currency_edit,amount,i_source),incId);
+						dbh.updateIncome(new Income(i_name_edit,i_desc_edit,i_date_edit,i_currency_edit,amount,i_source,i_freq_edit,i_notify_edit),incId);
 						endActivity("edited");
 					}
 				}
@@ -298,6 +315,19 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 				i_currency =  c.getString(4);
 				i_amount = c.getFloat(5);
 				i_source = c.getString(6);
+				String freq = c.getString(7);
+				for(int i =0;i<freqadapter.getCount();i++) {
+					if(freq.equals(freqadapter.getItem(i))) {
+						frequency.setSelection(i);
+						i_freq = i;
+						break;
+					}
+				}
+				String askTemp = c.getString(8);
+				if(askTemp.equals("yes")) {
+					ask.setChecked(true);
+					i_notify = true;
+				}
 				
 				((EditText)findViewById(R.id.inputIncomeNameEdit)).setText(i_name);
 				((EditText)findViewById(R.id.inputIncomeAmountEdit)).setText(Float.toString(i_amount));

@@ -34,6 +34,8 @@ public class DBHandler extends SQLiteOpenHelper{
     private static final String KEY_E_AMOUNT = "e_amount";
     private static final String KEY_E_CATEGORY1 = "e_category1";
     private static final String KEY_E_CONVRATE = "e_convrate";
+    private static final String KEY_E_FREQ = "e_freq"; //frequecy of repetition 
+    private static final String KEY_E_ASK = "e_ask"; //ask the user before adding recurrence
     
     /** Income Table **/
     private static final String TABLE_INCOME	 = "Income";
@@ -46,6 +48,8 @@ public class DBHandler extends SQLiteOpenHelper{
     private static final String KEY_I_AMOUNT = "i_amount";
     private static final String KEY_I_SOURCE = "i_source";
     private static final String KEY_I_CONVRATE = "i_convrate";
+    private static final String KEY_I_FREQ = "i_freq"; //frequecy of repetition 
+    private static final String KEY_I_ASK = "i_ask"; //ask the user before adding recurrence
     
     /** Category Table **/
     public static final String TABLE_CATEGORY	 = "Category";
@@ -114,7 +118,10 @@ public class DBHandler extends SQLiteOpenHelper{
 	        		+ KEY_E_CURRENCY + " TEXT, " 
 	                + KEY_E_AMOUNT + " REAL, "
 	                + KEY_E_CATEGORY1 + " TEXT, "
-	                + KEY_E_CONVRATE + " REAL"+")";
+	                + KEY_E_CONVRATE + " REAL, "
+	                + KEY_E_FREQ + " TEXT, "
+	                + KEY_E_ASK + " TEXT"
+	                +")";
 	        db.execSQL(CREATE_EXPENSES_TABLE);
 	        
 	      //Income Table
@@ -126,7 +133,10 @@ public class DBHandler extends SQLiteOpenHelper{
 	        		+ KEY_I_CURRENCY + " TEXT, " 
 	                + KEY_I_AMOUNT + " REAL, "
 	                + KEY_I_SOURCE + " TEXT, "
-	                + KEY_I_CONVRATE + " REAL"+")";
+	                + KEY_I_CONVRATE + " REAL, "
+	                + KEY_I_FREQ + " TEXT, "
+	                + KEY_I_ASK + " TEXT"
+	                +")";
 	        db.execSQL(CREATE_INCOME_TABLE);
 	        	        
 	        //Category Table     

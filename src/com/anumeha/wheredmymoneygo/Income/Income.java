@@ -12,18 +12,18 @@ public class Income extends CashFlow{
 	         
 	    }
 	    // constructor
-	    public Income(int id, String name, String desc, String date, String currency, float amount,  String source){
+	    public Income(int id, String name, String desc, String date, String currency, float amount,  String source, String freq, boolean ask){
 	       
-	    	super(id,name,desc,date,currency,amount);
+	    	super(id,name,desc,date,currency,amount,freq,ask);
 	        this._source = source;
 	        
 	    }
 	     
 	   
 		// constructor
-	    public Income(String name, String desc, String date, String currency, float amount, String source){
+	    public Income(String name, String desc, String date, String currency, float amount, String source, String freq, boolean ask){
 	       
-	    	super(name,desc,date,currency,amount);
+	    	super(name,desc,date,currency,amount,freq,ask);
 	        this._source = source;
 	         
 	    }

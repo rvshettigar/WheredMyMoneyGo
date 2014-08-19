@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.anumeha.wheredmymoneygo.OptionsDialog;
 import com.anumeha.wheredmymoneygo.Category.CategoryCursorLoader;
 import com.anumeha.wheredmymoneygo.Currency.CurrencyCursorLoader;
 import com.anumeha.wheredmymoneygo.DBhelpers.ExpenseDbHelper;
@@ -30,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -39,12 +41,13 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 	
 	private Button add, cancel;
 	private static TextView expenseDate;
-	private Spinner category1, currency;
+	private Spinner category1, currency, frequency;
 	private static String e_date;
 	ExpenseDbHelper dbh;
 	CategoryCursorLoader loader;
 	boolean valid = true;
 	CurrencyConverter convFrag;
+	CheckBox ask;
 	
 	final static int DATE_DIALOG_ID = 999;
 	 @Override
@@ -56,7 +59,14 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 	        
 	        category1 = (Spinner)findViewById(R.id.expCategory1);
 	        currency = (Spinner)findViewById(R.id.inputExpenseCurrency);
+	        frequency = (Spinner)findViewById(R.id.inputExpenseFreq);
+	        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+			        R.array.frequency_spinner_items, android.R.layout.simple_spinner_item);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			frequency.setAdapter(adapter);
+			frequency.setSelection(0);
 	        
+			ask = (CheckBox)findViewById(R.id.inputExpNotify); 
 	        setCurrentDate();
 	        add = (Button)findViewById(R.id.expAddSubmit);
 			add.setOnClickListener(this);
@@ -136,6 +146,8 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 					e_desc =" ";
 				}
 				
+				String freq = frequency.getSelectedItem().toString(); 
+				boolean notify = ask.isChecked();
 				if(valid) {	
 					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
 	 					@Override
@@ -145,7 +157,7 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 	 					@Override
 	 					public void OnFaiure(int errCode) {
 	 						endActivity("added");
-	 					}  },new Expense(e_name,e_desc,e_date,e_currency,amount,e_category1),false);          		
+	 					}  },new Expense(e_name,e_desc,e_date,e_currency,amount,e_category1,freq,notify),false);          		
 				}
 				
 				else

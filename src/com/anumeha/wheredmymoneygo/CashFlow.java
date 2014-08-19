@@ -22,13 +22,15 @@ public class CashFlow {
     private String _currency;
     private float _amount;
     private float _convToDef;
+    private String freq;
+    private boolean ask;
     
     //empty constructor
     public CashFlow(){}
     
 
     // constructor
-    public CashFlow(int id, String name, String desc, String date, String currency, float amount){
+    public CashFlow(int id, String name, String desc, String date, String currency, float amount, String freq, boolean ask){
        
     	this._id = id;
         this._name = name;
@@ -36,30 +38,36 @@ public class CashFlow {
         this._date = date;
         this._currency = currency;
         this._amount = amount;
+        this.setFreq(freq);
+        this.setAsk(ask);
         
     }
      
    
 	// constructor
-    public CashFlow(String name, String desc, String date, String currency, float amount){
+    public CashFlow(String name, String desc, String date, String currency, float amount,String freq, boolean ask){
         
         this._name = name;
         this._desc = desc;
         this._date = date;
         this._currency = currency;
         this._amount = amount;
+        this.setFreq(freq);
+        this.setAsk(ask);
          
     }
     
     //constructor with currency conv 
-    public CashFlow(String name, String desc, String date, String currency, float amount, float convToDef){
+    public CashFlow(String name, String desc, String date, String currency, float amount, float convToDef, String freq, boolean ask){
         
         this._name = name;
         this._desc = desc;
         this._date = date;
         this._currency = currency;
         this._amount = amount;
-        this._convToDef = convToDef;   
+        this._convToDef = convToDef; 
+        this.setFreq(freq);
+        this.setAsk(ask);
     }
     
  // getting ID
@@ -150,6 +158,26 @@ public class CashFlow {
 
 	public void set_convToDef(float _convToDef) {
 		this._convToDef = _convToDef;
+	}
+
+
+	public String getFreq() {
+		return freq;
+	}
+
+
+	public void setFreq(String freq) {
+		this.freq = freq;
+	}
+
+
+	public boolean getAsk() {
+		return ask;
+	}
+
+
+	public void setAsk(boolean ask) {
+		this.ask = ask;
 	}
 
 }

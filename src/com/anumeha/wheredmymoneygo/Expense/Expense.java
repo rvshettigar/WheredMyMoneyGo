@@ -1,10 +1,5 @@
 package com.anumeha.wheredmymoneygo.Expense;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import com.anumeha.wheredmymoneygo.CashFlow;
 
 public class Expense extends CashFlow{
@@ -18,18 +13,18 @@ public class Expense extends CashFlow{
          
     }
     // constructor
-    public Expense(int id, String name, String desc, String date, String currency, float amount,  String category1){
+    public Expense(int id, String name, String desc, String date, String currency, float amount,  String category1, String freq, boolean ask){
        
-    	super(id,name,desc,date,currency,amount);
+    	super(id,name,desc,date,currency,amount,freq,ask);
         this._category1 = category1;
         
     }
      
    
 	// constructor
-    public Expense(String name, String desc, String date, String currency, float amount, String category1){
+    public Expense(String name, String desc, String date, String currency, float amount, String category1, String freq, boolean ask){
        
-    	super(name,desc,date,currency,amount);
+    	super(name,desc,date,currency,amount,freq,ask);
         this._category1 = category1;
          
     }

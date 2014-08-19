@@ -25,6 +25,8 @@ public class IncomeDbHelper {
     private static final String KEY_I_AMOUNT = "i_amount";
     private static final String KEY_I_SOURCE = "i_source";
     private static final String KEY_I_CONVRATE = "i_convrate";
+    private static final String KEY_I_FREQ = "i_freq"; //frequecy of repetition 
+    private static final String KEY_I_ASK = "i_ask"; //ask the user before adding recurrence
     
     private SQLiteDatabase database;
 	private DBHandler dbh;
@@ -47,6 +49,8 @@ public class IncomeDbHelper {
 	    values.put(KEY_I_AMOUNT, income.getAmount()); // income amount  
 	    values.put(KEY_I_SOURCE, income.getSource()); // income Source
 	    values.put(KEY_I_CONVRATE, income.get_convToDef()); // Income conversion to default rate
+	    values.put(KEY_I_FREQ, income.getFreq()); // Income Frequency
+	    values.put(KEY_I_ASK, income.getAsk()?"yes":"no"); // Ask before adding recurrence
 	    // Inserting Row
 	    database.insert(TABLE_INCOME, null, values);
 	    database.close(); // Closing database connection
@@ -140,7 +144,8 @@ public class IncomeDbHelper {
 	 	    values.put(KEY_I_AMOUNT, income.getAmount()); // income amount  
 	 	    values.put(KEY_I_SOURCE, income.getSource()); // income Source
 	 	    values.put(KEY_I_CONVRATE, income.get_convToDef()); // Income conversion to default rate
-     	 
+	 	    values.put(KEY_I_FREQ, income.getFreq()); // Income Frequency
+		    values.put(KEY_I_ASK, income.getAsk()?"yes":"no"); // Ask before adding recurrence
      	    // Updating Row
      	    db.update(TABLE_INCOME, values, KEY_I_ID+"="+ id , null);
      	    db.close(); // Closing database connection

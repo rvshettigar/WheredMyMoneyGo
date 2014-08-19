@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -40,15 +41,19 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 	
 	private static Button add, cancel;
 	private static TextView expenseDate;
-	private static Spinner category1, currency;
+	private static Spinner category1, currency, frequency;
 	private String e_name;
 	private static String e_date, e_date_edit;
 	private String e_desc;
 	private String e_category1;
 	private String e_currency;
+	private int e_freq;
+	private boolean e_notify;
     private static float e_amount;	
     private static ArrayAdapter<String> dataAdapter1, dataAdapter2;
+    private ArrayAdapter<CharSequence> freqadapter;
     static String dateFormat;
+    private CheckBox ask;
 	boolean loadFinished1 =false;
 	boolean loadFinished2 =false;
 	boolean loadFinished3 =false;
@@ -68,8 +73,15 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 	        
 	        category1 = (Spinner)findViewById(R.id.expCategory1Edit);
 	        currency = (Spinner)findViewById(R.id.inputExpenseCurrencyEdit);
-	        expenseDate = (TextView)findViewById(R.id.expenseDateEdit);
+	        frequency = (Spinner)findViewById(R.id.inputExpenseFreqEdit);
+	        
+	        freqadapter = ArrayAdapter.createFromResource(this,
+			        R.array.frequency_spinner_items, android.R.layout.simple_spinner_item);
+			freqadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			frequency.setAdapter(freqadapter);
 
+	        ask = (CheckBox)findViewById(R.id.inputExpNotifyEdit); 
+	        expenseDate = (TextView)findViewById(R.id.expenseDateEdit);
 	        add = (Button)findViewById(R.id.expSaveEdit);
 			add.setOnClickListener(this);
 			cancel = (Button)findViewById(R.id.expCancelEdit);
@@ -175,6 +187,11 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 					noChanges = false;
 					
 				}
+				String e_freq_edit = frequency.getSelectedItem().toString();
+				if(frequency.getSelectedItemPosition()!= e_freq) noChanges = false;
+				
+				boolean e_notify_edit = ask.isChecked();
+				if(e_notify_edit != e_notify) noChanges = false;
 				
 				
 				if(valid && !noChanges) {	
@@ -187,9 +204,9 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 		 					@Override
 		 					public void OnFaiure(int errCode) {
 		 						endActivity("edited");
-		 					}  },new Expense(expId,e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1_edit),true); 
+		 					}  },new Expense(expId,e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1_edit,e_freq_edit,e_notify_edit),true); 
 					} else {
-						dbh.updateExpense(new Expense(e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1_edit),expId);
+						dbh.updateExpense(new Expense(e_name_edit,e_desc_edit,e_date_edit,e_currency_edit,amount,e_category1_edit,e_freq_edit,e_notify_edit),expId);
 						endActivity("edited");
 					}
             		
@@ -294,8 +311,20 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 				e_currency =  c.getString(4);
 				e_amount = c.getFloat(5);
 				e_category1 = c.getString(6);
-				
-				
+				String freq = c.getString(7);
+				for(int i =0;i<freqadapter.getCount();i++) {
+					if(freq.equals(freqadapter.getItem(i))) {
+						frequency.setSelection(i);
+						e_freq = i;
+						break;
+					}
+				}
+				String askTemp = c.getString(8);
+				if(askTemp.equals("yes")) {
+					ask.setChecked(true);
+					e_notify = true;
+				}
+	
 				
 				((EditText)findViewById(R.id.inputExpenseNameEdit)).setText(e_name);
 				((EditText)findViewById(R.id.inputExpenseAmountEdit)).setText(Float.toString(e_amount));
