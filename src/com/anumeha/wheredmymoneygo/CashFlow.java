@@ -15,7 +15,7 @@ import java.util.Locale;
 public class CashFlow {
 	
 	 //private variables
-    private int _id;
+    private long _id;
     private String _name;
     private String _desc;
     private String _date;
@@ -30,7 +30,7 @@ public class CashFlow {
     
 
     // constructor
-    public CashFlow(int id, String name, String desc, String date, String currency, float amount, String freq, boolean ask){
+    public CashFlow(long id, String name, String desc, String date, String currency, float amount, String freq, boolean ask){
        
     	this._id = id;
         this._name = name;
@@ -71,7 +71,7 @@ public class CashFlow {
     }
     
  // getting ID
-    public int getID(){
+    public long getID(){
         return this._id;
     }
      

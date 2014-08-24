@@ -39,7 +39,8 @@ public class IncomeDbHelper {
 	}
 	
 	// Adding new income
-    public void addIncome(Income income) {
+    public long addIncome(Income income) {
+    	long id;
 	    database = dbh.getWritableDatabase();
 	    ContentValues values = new ContentValues();
 	    values.put(KEY_I_NAME, income.getName()); // IncomeName
@@ -52,8 +53,9 @@ public class IncomeDbHelper {
 	    values.put(KEY_I_FREQ, income.getFreq()); // Income Frequency
 	    values.put(KEY_I_ASK, income.getAsk()?"yes":"no"); // Ask before adding recurrence
 	    // Inserting Row
-	    database.insert(TABLE_INCOME, null, values);
+	    id = database.insert(TABLE_INCOME, null, values);
 	    database.close(); // Closing database connection
+	    return id;
     }
     
     //getting all income
@@ -123,7 +125,7 @@ public class IncomeDbHelper {
     	
     }
 
-    public Cursor getIncomeById(int id) {
+    public Cursor getIncomeById(long id) {
     	
       	 SQLiteDatabase db = dbh.getWritableDatabase();   	 
       	 Cursor c = db.query(TABLE_INCOME, null ,KEY_I_ID +" = "+id,null,null,null,null);
@@ -133,7 +135,7 @@ public class IncomeDbHelper {
    	
 
        //update income
-       public void updateIncome(Income income, int id) {
+       public void updateIncome(Income income, long id) {
          SQLiteDatabase db = dbh.getWritableDatabase();
        		 
          ContentValues values = new ContentValues();

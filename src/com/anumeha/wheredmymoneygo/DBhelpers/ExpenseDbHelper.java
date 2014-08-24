@@ -42,7 +42,7 @@ public class ExpenseDbHelper {
 	}
 	
 	// Adding new expense
-    public void addExpense(Expense expense) {
+    public long addExpense(Expense expense) {
 	    database = dbh.getWritableDatabase();
 
 	    System.out.println("Conv Rate gotten as: "+convRate);
@@ -57,8 +57,9 @@ public class ExpenseDbHelper {
 	    values.put(KEY_E_FREQ, expense.getFreq()); // Expense Frequency
 	    values.put(KEY_E_ASK, expense.getAsk()?"yes":"no"); // Ask before adding recurrence
 	    // Inserting Row
-	    database.insert(TABLE_EXPENSES, null, values);
+	   long id =  (int) database.insert(TABLE_EXPENSES, null, values);
 	    database.close(); // Closing database connection
+	    return id;
     }
     
 
@@ -129,10 +130,10 @@ public class ExpenseDbHelper {
     	
     }
     
-    public Cursor getExpenseById(int id) {
+    public Cursor getExpenseById(long old_id) {
     	
    	 SQLiteDatabase db = dbh.getWritableDatabase();   	 
-   	 Cursor c = db.query(TABLE_EXPENSES, null ,KEY_E_ID +" = "+id,null,null,null,null);
+   	 Cursor c = db.query(TABLE_EXPENSES, null ,KEY_E_ID +" = "+old_id,null,null,null,null);
     	
     	return c;
     }
@@ -147,7 +148,7 @@ public class ExpenseDbHelper {
 	
 
     //update expense
-    public void updateExpense(Expense expense, int id) {
+    public void updateExpense(Expense expense, long old_id) {
       SQLiteDatabase db = dbh.getWritableDatabase();
     		 
   	    ContentValues values = new ContentValues();
@@ -162,7 +163,7 @@ public class ExpenseDbHelper {
 	    values.put(KEY_E_ASK, expense.getAsk()?"yes":"no"); // Ask before adding recurrence
   	 
   	    // Updating Row
-  	    db.update(TABLE_EXPENSES, values, KEY_E_ID+"="+ id , null);
+  	    db.update(TABLE_EXPENSES, values, KEY_E_ID+"="+ old_id , null);
   	    db.close(); // Closing database connection
   
     }

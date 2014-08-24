@@ -196,9 +196,9 @@ public class ExpenseEditActivity extends Activity implements OnClickListener, Lo
 				
 				if(valid && !noChanges) {	
 					if(!e_currency_edit.equals(e_currency)) {
-						convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+						convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Long>() {	
 		 					@Override
-		 					public void OnSuccess(Float rate) {
+		 					public void OnSuccess(Long rate) {
 		 						endActivity("edited");
 		 					}	
 		 					@Override

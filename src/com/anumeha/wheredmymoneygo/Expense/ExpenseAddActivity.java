@@ -12,6 +12,7 @@ import com.anumeha.wheredmymoneygo.OptionsDialog;
 import com.anumeha.wheredmymoneygo.Category.CategoryCursorLoader;
 import com.anumeha.wheredmymoneygo.Currency.CurrencyCursorLoader;
 import com.anumeha.wheredmymoneygo.DBhelpers.ExpenseDbHelper;
+import com.anumeha.wheredmymoneygo.Income.IncomeListFragment;
 import com.anumeha.wheredmymoneygo.Services.CurrencyConverter;
 import com.example.wheredmymoneygo.*;
 
@@ -48,8 +49,11 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 	boolean valid = true;
 	CurrencyConverter convFrag;
 	CheckBox ask;
+	Intent i;
+	boolean hasRec = false;
 	
 	final static int DATE_DIALOG_ID = 999;
+	private static final int REC_ADDED = 0;
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
@@ -86,7 +90,7 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 			getLoaderManager().initLoader(1,null, this ); // 1 for category
 			getLoaderManager().initLoader(5,null, this ); //5 for currency
 		
-	 
+			i = new Intent (this,com.anumeha.wheredmymoneygo.Expense.ExpenseAlarmManager.class);
 	    }
 	 
 	 public void endActivity(String res) {	
@@ -147,15 +151,31 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 				}
 				
 				String freq = frequency.getSelectedItem().toString(); 
+				if(frequency.getSelectedItemPosition() > 0) {
+					hasRec = true;
+				}
 				boolean notify = ask.isChecked();
+			
+					
+		 			i.putExtra("rec_freq",freq );
+		 			i.putExtra("rec_add",true );
+		 			i.putExtra("rec_isIncome",false );
+					i.putExtra("rec_rem", false);
+					i.putExtra("rec_notify", notify);
+					i.putExtra("old_freq","" );
+					
 				if(valid) {	
-					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Long>() {	
 	 					@Override
-	 					public void OnSuccess(Float rate) {
-	 						endActivity("added");
+	 					public void OnSuccess(Long id) {
+	 						//endActivity("added");
+	 						//start activity for adding rec
+	 						startRecActivity(id);
+	 		
 	 					}	
 	 					@Override
 	 					public void OnFaiure(int errCode) {
+	 						//add code for asking user to input rate manually
 	 						endActivity("added");
 	 					}  },new Expense(e_name,e_desc,e_date,e_currency,amount,e_category1,freq,notify),false);          		
 				}
@@ -179,7 +199,30 @@ public class ExpenseAddActivity extends Activity implements OnClickListener, Loa
 	 }
 
 	 
-	 public void setCurrentDate() {			 
+	 protected void startRecActivity(long id) {
+		 if(hasRec) {
+		 i.putExtra("rec_id", id);
+		 this.startActivityForResult(i,REC_ADDED);
+		 } else {
+			 endActivity("added");
+		 }
+		
+	}
+	 
+	 @Override
+		protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		  if (resultCode == RESULT_OK ) {
+			  
+			  switch(requestCode) {
+			  case 00: 
+				  endActivity("added");
+			  break;
+			  }
+		}				  
+		
+	  }
+
+	public void setCurrentDate() {			 
 		expenseDate = (TextView) findViewById(R.id.expenseDate);			
 		Date myDate;
 	    Calendar cal = Calendar.getInstance();	    

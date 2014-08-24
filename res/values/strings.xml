@@ -3,9 +3,9 @@
 
     <string name="app_name">Where\'d my Money go?</string>
     <string name="catAct_name">Categories</string>
-     <string name="catEditAct_name">Edit Catgeory</string>
-     <string name="souAct_name">Sources</string>
-     <string name="souEditAct_name">Edit Source</string>
+    <string name="catEditAct_name">Edit Catgeory</string>
+    <string name="souAct_name">Sources</string>
+    <string name="souEditAct_name">Edit Source</string>
     <string name="action_categories">Categories</string>
     <string name="action_sources">Sources</string>
     <string name="action_recurences">Recurrences</string>
@@ -15,9 +15,12 @@
     <string name="title_expvsinctab">Exp vs Inc</string>
     <string name="expAddAct_name">Add Expense</string>
     <string name="expEditAct_name">Edit Expense</string>
-     <string name="incAddAct_name">Add Income</string>
+    <string name="incAddAct_name">Add Income</string>
     <string name="incEditAct_name">Edit Income</string>
     <string name="optionsAct_name">Select Options:</string>
+    <string name="alarmAct_name">Alarm</string>
+    <string name="expAlarmAct_name">Expense Alarm</string>
+    <string name="incAlarmAct_name">Income Alarm</string>
     
     <string-array  name="listview_menu">
         <item>Edit</item>
