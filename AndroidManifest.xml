@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
+   
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -71,6 +72,22 @@
            	  android:label="@string/optionsAct_name" 
               android:theme="@android:style/Theme.Holo.Dialog" />
         
+          <receiver
+   			 android:name="com.anumeha.wheredmymoneygo.receiver.AlarmReceiver">
+   		 </receiver>
+   		 
+          <activity 
+              android:name="com.anumeha.wheredmymoneygo.Services.WmmgAlarmManager"
+           	  android:label="@string/alarmAct_name" 
+              android:theme="@android:style/Theme.NoDisplay" />
+          <activity 
+              android:name="com.anumeha.wheredmymoneygo.Expense.ExpenseAlarmManager"
+           	  android:label="@string/expAlarmAct_name" 
+              android:theme="@android:style/Theme.NoDisplay" />
+          <activity 
+              android:name="com.anumeha.wheredmymoneygo.Income.IncomeAlarmManager"
+           	  android:label="@string/incAlarmAct_name" 
+              android:theme="@android:style/Theme.NoDisplay" />
          
     </application>
 

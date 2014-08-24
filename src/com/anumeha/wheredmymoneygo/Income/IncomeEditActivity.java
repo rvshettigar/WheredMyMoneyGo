@@ -202,9 +202,9 @@ public class IncomeEditActivity extends Activity implements OnClickListener, Loa
 				
 				if(valid && !noChanges) {	
 					if(!i_currency_edit.equals(i_currency)) {
-					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Long>() {	
 	 					@Override
-	 					public void OnSuccess(Float rate) {
+	 					public void OnSuccess(Long rate) {
 	 						endActivity("edited");
 	 					}	
 	 					@Override

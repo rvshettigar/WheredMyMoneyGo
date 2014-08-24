@@ -48,8 +48,11 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 	boolean valid = true;
 	CurrencyConverter convFrag;
 	CheckBox ask;
+	Intent i;
+	boolean hasRec = false;
 	
 	final static int DATE_DIALOG_ID = 999;
+	private static final int REC_ADDED = 0;
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
@@ -86,7 +89,7 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 			
 			getLoaderManager().initLoader(1,null, this );
 			getLoaderManager().initLoader(4,null, this );
-	 
+			i = new Intent (this,com.anumeha.wheredmymoneygo.Income.IncomeAlarmManager.class);
 	    }
 	 
 	 public void endActivity(String res) {	
@@ -145,12 +148,22 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 					i_desc =" ";
 				}
 				String freq = frequency.getSelectedItem().toString(); 
+				if(frequency.getSelectedItemPosition() > 0) {
+					hasRec = true;
+				}
 				boolean notify = ask.isChecked();
+
+		 			i.putExtra("rec_freq",freq );
+		 			i.putExtra("rec_add",true );
+		 			i.putExtra("rec_isIncome",false );
+					i.putExtra("rec_rem", false);
+					i.putExtra("rec_notify", notify);
+					i.putExtra("old_freq","" );
 				if(valid) {	
-					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Float>() {	
+					convFrag.getConvertedRate(new CurrencyConverter.ResultListener<Long>() {	
 	 					@Override
-	 					public void OnSuccess(Float rate) {
-	 						endActivity("added");
+	 					public void OnSuccess(Long id) {
+	 						startRecActivity(id);
 	 					}	
 	 					@Override
 	 					public void OnFaiure(int errCode) {
@@ -177,7 +190,28 @@ public class IncomeAddActivity extends Activity implements OnClickListener, Load
 			}	 
 	 }
 
+	 protected void startRecActivity(long id) {
+		 if(hasRec) {
+		 i.putExtra("rec_id", id);
+		 this.startActivityForResult(i,REC_ADDED);
+		 } else {
+			 endActivity("added");
+		 }
+		
+	}
 	 
+	 @Override
+		protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		  if (resultCode == RESULT_OK ) {
+			  
+			  switch(requestCode) {
+			  case 00: 
+				  endActivity("added");
+			  break;
+			  }
+		}				  
+		
+	  } 
 	 public void setCurrentDate() {			 
 		incomeDate = (TextView) findViewById(R.id.incomeDate);			
 		Date myDate;

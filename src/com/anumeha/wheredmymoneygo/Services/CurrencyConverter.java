@@ -57,7 +57,7 @@ public class CurrencyConverter extends Fragment{
 		void OnFaiure(int errCode);
 	}
 	
-	public void getConvertedRate(ResultListener<Float> lstnr, Expense e, boolean update) {
+	public void getConvertedRate(ResultListener<Long> lstnr, Expense e, boolean update) {
 		
 		String to = prefs.getString("def_currency","USD" );
 		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,context, e, update);
@@ -65,7 +65,7 @@ public class CurrencyConverter extends Fragment{
 		context = null;
 	}
 	
-	public void getConvertedRate(ResultListener<Float> lstnr, Income i, boolean update) {
+	public void getConvertedRate(ResultListener<Long> lstnr, Income i, boolean update) {
 		
 		String to = prefs.getString("def_currency","USD" );
 		ConvertCurrencyTask task = new ConvertCurrencyTask(lstnr,context, i,update);
@@ -75,7 +75,7 @@ public class CurrencyConverter extends Fragment{
 
 	static class ConvertCurrencyTask extends AsyncTask<String, Void, Float> {
 		
-		ResultListener<Float> lstnr; 
+		ResultListener<Long> lstnr; 
 		CurrencyDbHelper db;
 		ExpenseDbHelper expDb ;
 		IncomeDbHelper incDb;
@@ -85,9 +85,10 @@ public class CurrencyConverter extends Fragment{
 		ProgressDialog pd;
 		boolean update = false;
 		ConnectivityManager cm;
+		long id = -1;
 		       
 		
-		ConvertCurrencyTask(ResultListener<Float> lstnr, Context context, Expense e,boolean update) {
+		ConvertCurrencyTask(ResultListener<Long> lstnr, Context context, Expense e,boolean update) {
 			this.lstnr = lstnr;
 			this.db = new CurrencyDbHelper(context);
 			this.e = e;
@@ -99,7 +100,7 @@ public class CurrencyConverter extends Fragment{
 		}
 		
 		
-		ConvertCurrencyTask(ResultListener<Float> lstnr,Context context, Income i,boolean update) {
+		ConvertCurrencyTask(ResultListener<Long> lstnr,Context context, Income i,boolean update) {
 			this.lstnr = lstnr;
 			this.db = new CurrencyDbHelper(context);
 			this.i = i;
@@ -133,7 +134,7 @@ public class CurrencyConverter extends Fragment{
 					e.set_convToDef(rate);
 				}
 				if(!update) {
-					expDb.addExpense(e); 
+					id = expDb.addExpense(e); 
 				} else {
 					expDb.updateExpense(e, e.getID());
 				}
@@ -144,7 +145,7 @@ public class CurrencyConverter extends Fragment{
 					i.set_convToDef(rate);
 				}
 				if(!update) {
-					incDb.addIncome(i); 
+					id=incDb.addIncome(i); 
 				}else {
 					incDb.updateIncome(i, i.getID());
 				}
@@ -162,7 +163,7 @@ public class CurrencyConverter extends Fragment{
 				lstnr.OnFaiure(0);
 			} else {
 				pd.dismiss();
-				lstnr.OnSuccess(rate); 
+				lstnr.OnSuccess(id); 
 			}
 			
 		}
